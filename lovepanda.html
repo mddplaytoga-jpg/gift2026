@@ -1,0 +1,2652 @@
+<!doctype html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Veja como seu presente vai ficar | LovePanda</title>
+  <meta name="theme-color" content="#24668f" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Caveat:wght@400;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #121212;
+      margin: 0;
+      padding: 0;
+    }
+
+    .swiper-pagination-bullet {
+      background: rgba(242, 249, 254, 0.5);
+      opacity: 1;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: #f2f9fe;
+    }
+
+    .swiper-pagination {
+      bottom: 8px !important;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+
+    .message-fade {
+      background: linear-gradient(rgba(69, 151, 201, 0) 0%,
+          rgba(69, 151, 201, 0.7) 80%,
+          rgba(69, 151, 201, 0.95) 100%);
+    }
+
+    .progress-thumb {
+      transition: left 0.1s linear;
+    }
+
+    .photo-grid-item {
+      aspect-ratio: 1.7 / 3;
+    }
+
+    .achievement-gold {
+      background: linear-gradient(145deg, rgb(253, 230, 138), rgb(245, 158, 11), rgb(253, 230, 138));
+    }
+
+    .achievement-purple {
+      background: linear-gradient(145deg, rgb(192, 132, 252), rgb(139, 92, 246), rgb(192, 132, 252));
+    }
+
+    .achievement-inner-gold {
+      background: radial-gradient(circle at 50% 45%, rgba(251, 191, 36, 0.063) 0%, transparent 65%), rgb(20, 20, 20);
+    }
+
+    .achievement-inner-purple {
+      background: radial-gradient(circle at 50% 45%, rgba(167, 139, 250, 0.063) 0%, transparent 65%), rgb(20, 20, 20);
+    }
+
+    /* ── Full-screen Gallery (Stories style) ── */
+    #galleryView {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    #galleryView.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Full-screen photo background */
+    #galleryBg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    #galleryBg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+          rgba(0, 0, 0, 0.45) 0%,
+          transparent 25%,
+          transparent 60%,
+          rgba(0, 0, 0, 0.7) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .photo-slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Tap zones (left / right to change photo) */
+    #tapLeft,
+    #tapRight {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      z-index: 2;
+      cursor: pointer;
+    }
+
+    #tapLeft {
+      left: 0;
+    }
+
+    #tapRight {
+      right: 0;
+    }
+
+    /* Story progress bars */
+    #storyBarsContainer {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      gap: 3px;
+      padding: 48px 16px 8px;
+    }
+
+    .s-bar {
+      height: 2.5px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.35);
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .s-bar-fill {
+      height: 100%;
+      background: #fff;
+      width: 0%;
+    }
+
+    /* Top header row */
+    #galleryHeader {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 16px 12px;
+    }
+
+    /* Bottom info area */
+    #galleryFooter {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 3;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 16px 40px;
+    }
+
+    /* Category chip */
+    #categoryChip {
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      max-width: 70%;
+    }
+
+    #categoryChipTitle {
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    #categoryChipCount {
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 12px;
+    }
+
+    /* Right action icons */
+    #galleryActions {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .g-action {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+    }
+
+    /* Category switcher row (below footer) */
+    #categorySwitcher {
+      position: absolute;
+      bottom: -80px;
+      left: 0;
+      right: 0;
+      z-index: 3;
+      display: flex;
+      gap: 10px;
+      padding: 0 16px;
+      transition: bottom 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    #galleryView.show-switcher #categorySwitcher {
+      bottom: 50px;
+    }
+
+    .cat-thumb {
+      flex: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      aspect-ratio: 1/1.4;
+      border: 2px solid transparent;
+      transition: border-color 0.15s;
+    }
+
+    .cat-thumb.active {
+      border-color: #fff;
+    }
+
+    .cat-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cat-thumb-label {
+      position: absolute;
+      bottom: 4px;
+      left: 6px;
+      right: 6px;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .category-mini-card {
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .category-mini-card:active {
+      transform: scale(0.97);
+    }
+
+    /* ════════════ GIFT INTRO — ZIPPER REVEAL ════════════ */
+    #giftIntro {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      cursor: pointer;
+    }
+
+    /* ── 2 wrap panels (V-shape clip-path) ── */
+    #wL,
+    #wR {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      overflow: hidden;
+    }
+
+    #wL {
+      left: 0;
+    }
+
+    #wR {
+      right: 0;
+    }
+
+    /* Paper fill */
+    .wd {
+      position: absolute;
+      inset: 0;
+      background: #f344ed;
+    }
+
+    /* Vertical ribbon — at the shared edge (screen centre) */
+    .wd::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 18px;
+      background: #3dc4f4;
+      box-shadow: 0 0 18px rgba(61, 196, 244, 0.5);
+    }
+
+    #wL .wd::after {
+      right: 0;
+    }
+
+    /* right edge of left panel = screen centre */
+    #wR .wd::after {
+      left: 0;
+    }
+
+    /* left edge of right panel = screen centre */
+
+    /* Horizontal ribbon — extends beyond panel via negative margins */
+    .wd-hrib {
+      position: absolute;
+      top: 33%;
+      height: 36px;
+      left: -100vw;
+      right: -100vw;
+      background: #3dc4f4;
+      box-shadow: 0 0 18px rgba(61, 196, 244, 0.45);
+    }
+
+    /* ── Zipper pull tab ── */
+    #zipPull {
+      position: absolute;
+      left: 50%;
+      top: -6px;
+      transform: translateX(-50%);
+      z-index: 11;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .zp-ring {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      background: radial-gradient(circle at 40% 35%, #a8ecff, #3dc4f4);
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.4),
+        0 0 12px rgba(61, 196, 244, 0.6);
+    }
+
+    .zp-body {
+      width: 14px;
+      height: 22px;
+      border-radius: 3px;
+      background: linear-gradient(to bottom, #3dc4f4, #1a8ab0);
+      margin-top: -3px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    /* ── Gift content overlay (bow + text + hint) ── */
+    #giftContent {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 44px;
+      pointer-events: none;
+    }
+
+    /* Bow */
+    .g-bow {
+      position: absolute;
+      top: calc(33% - 80px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 170px;
+      height: 150px;
+      z-index: 9;
+      animation: bowPulse 2.4s ease-in-out infinite;
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45));
+    }
+
+    @keyframes bowPulse {
+
+      0%,
+      100% {
+        transform: translateX(-50%) scale(1);
+      }
+
+      50% {
+        transform: translateX(-50%) scale(1.06);
+      }
+    }
+
+    .g-bow svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Message — anchored to bottom of screen */
+    .g-msg {
+      position: absolute;
+      z-index: 9;
+      bottom: 130px;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+      padding: 0 32px;
+    }
+
+    .g-badge {
+      background: rgba(212, 175, 55, 0.14);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 50px;
+      padding: 6px 18px;
+      color: #fde68a;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: gFadeUp 0.6s 0.3s forwards;
+    }
+
+    .g-title {
+      font-size: clamp(24px, 7vw, 36px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      font-family: "Manrope", sans-serif;
+      text-shadow: 0 2px 20px rgba(212, 175, 55, 0.25);
+      opacity: 0;
+      animation: gFadeUp 0.7s 0.55s forwards;
+    }
+
+    .g-from {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 500;
+      opacity: 0;
+      animation: gFadeUp 0.6s 0.8s forwards;
+    }
+
+    /* Hint arrows */
+    .g-hint {
+      position: absolute;
+      z-index: 9;
+      bottom: 44px;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      animation: gFadeUp 0.6s 1.3s forwards;
+    }
+
+    .g-hint-text {
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .g-arrows {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .g-arrow {
+      width: 22px;
+      height: 11px;
+      opacity: 0;
+      animation: arrowDrop 1.5s ease-in-out infinite;
+    }
+
+    .g-arrow:nth-child(2) {
+      animation-delay: 0.22s;
+    }
+
+    .g-arrow:nth-child(3) {
+      animation-delay: 0.44s;
+    }
+
+    @keyframes arrowDrop {
+
+      0%,
+      100% {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+
+      50% {
+        opacity: 1;
+        transform: translateY(5px);
+      }
+    }
+
+    @keyframes gFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── Wrapped Overlay ── */
+    #wrappedOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #0a0a14;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      overflow: hidden;
+    }
+
+    #wrappedOverlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Progress bars */
+    #wpBars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      gap: 3px;
+      padding: 48px 16px 0;
+      z-index: 10;
+    }
+
+    .wp-bar {
+      height: 2px;
+      flex: 1;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .wp-bar-fill {
+      height: 100%;
+      background: #fff;
+      width: 0%;
+      transition: width 0.05s linear;
+    }
+
+    /* Volume + close row */
+    #wpHeader {
+      position: absolute;
+      top: 54px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 16px;
+      z-index: 10;
+    }
+
+    .wp-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    /* Slide container */
+    #wpSlide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 28px 60px;
+    }
+
+    /* Tap zones */
+    #wpTapL,
+    #wpTapR {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      z-index: 5;
+      cursor: pointer;
+    }
+
+    #wpTapL {
+      left: 0;
+    }
+
+    #wpTapR {
+      right: 0;
+    }
+
+    /* Slide text animations */
+    .wp-kicker {
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: wpFadeUp 0.6s 0.1s forwards;
+    }
+
+    .wp-number {
+      font-size: clamp(64px, 18vw, 96px);
+      font-weight: 900;
+      line-height: 1;
+      color: #fff;
+      font-family: "Manrope", sans-serif;
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.3s forwards;
+    }
+
+    .wp-unit {
+      font-size: 22px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 8px;
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.5s forwards;
+    }
+
+    .wp-title {
+      font-size: clamp(28px, 8vw, 42px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.2s forwards;
+    }
+
+    .wp-subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.65);
+      font-weight: 500;
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.45s forwards;
+    }
+
+    .wp-pct {
+      font-size: clamp(80px, 22vw, 120px);
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.3s forwards;
+    }
+
+    .wp-pill {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 50px;
+      padding: 10px 20px;
+      margin-top: 16px;
+      display: inline-block;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.6s forwards;
+    }
+
+    .wp-song-title {
+      font-size: clamp(24px, 7vw, 36px);
+      font-weight: 800;
+      color: #fff;
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.35s forwards;
+    }
+
+    .wp-song-artist {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 4px;
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.5s forwards;
+    }
+
+    .wp-album-art {
+      width: 160px;
+      height: 160px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.15s forwards;
+    }
+
+    @keyframes wpFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Gradient backgrounds per slide */
+    .wp-bg-blue {
+      background: radial-gradient(at center bottom, #1a1a3e 0%, #0a0a14 50%, #000 100%);
+    }
+
+    .wp-bg-purple {
+      background: radial-gradient(at center top, #2d1b69 0%, #0a0a14 55%, #000 100%);
+    }
+
+    .wp-bg-teal {
+      background: radial-gradient(at 30% 70%, #0d3b4a 0%, #0a0a14 55%, #000 100%);
+    }
+
+    .wp-bg-rose {
+      background: radial-gradient(at center bottom, #3b0a1a 0%, #0a0a14 55%, #000 100%);
+    }
+
+    .wp-bg-amber {
+      background: radial-gradient(at center bottom, #3b2200 0%, #0a0a14 55%, #000 100%);
+    }
+
+    .wp-bg-green {
+      background: radial-gradient(at center bottom, #0a2e1a 0%, #0a0a14 55%, #000 100%);
+    }
+
+    .wp-bg-pink {
+      background: radial-gradient(at center top, rgba(244, 114, 182, 0.12) 0%, #121212 50%);
+    }
+
+    /* Stars SVG canvas */
+    #wpStars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .wp-meteor {
+      animation: meteorFly 2.5s ease-out infinite;
+      transform-origin: center;
+    }
+
+    @keyframes meteorFly {
+      0% {
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-120px, 80px);
+      }
+    }
+
+    /* ── Intro video slide ── */
+    #wpSlide.is-intro {
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .intro-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    /* Hours slide: background transitions from video's final red to dark */
+    .wp-bg-hours {
+      background-color: #ff2800 !important;
+      animation: hoursRedToDark 2.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+    }
+
+    @keyframes hoursRedToDark {
+      0% {
+        background-color: #ff2800;
+      }
+
+      100% {
+        background-color: #0a0a14;
+      }
+    }
+
+    /* ── Timeline slide ── */
+    #wpSlide.is-timeline {
+      padding: 0;
+      align-items: stretch;
+      justify-content: flex-start;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tl-inner {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 100px 0 60px;
+    }
+
+    .tl-title {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .tl-title h1 {
+      font-size: clamp(28px, 8vw, 40px);
+      font-weight: 800;
+      color: #fff;
+      font-family: "Manrope", sans-serif;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      animation: wpFadeUp 0.6s 0.1s forwards;
+    }
+
+    .tl-title p {
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 15px;
+      margin-top: 6px;
+      opacity: 0;
+      animation: wpFadeUp 0.6s 0.3s forwards;
+    }
+
+    /* Vertical line */
+    .tl-line {
+      position: absolute;
+      left: 50%;
+      top: 160px;
+      bottom: 120px;
+      width: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(transparent 0%,
+          rgba(255, 255, 255, 0.15) 8%,
+          rgba(255, 255, 255, 0.15) 92%,
+          transparent 100%);
+    }
+
+    /* Each event */
+    .tl-event {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 64px;
+      opacity: 0;
+      animation: wpFadeUp 0.5s forwards;
+    }
+
+    .tl-event.left {
+      flex-direction: row;
+    }
+
+    .tl-event.right {
+      flex-direction: row-reverse;
+    }
+
+    /* Heart dot */
+    .tl-heart {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      transition: transform 0.2s;
+    }
+
+    .tl-heart:active {
+      transform: translate(-50%, -50%) scale(1.4);
+    }
+
+    /* Polaroid */
+    .tl-polaroid {
+      width: 46%;
+      padding: 0 12px;
+    }
+
+    .tl-polaroid-inner {
+      background: #f9f9f9;
+      border-radius: 4px;
+      padding: 8px 8px 28px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .tl-event.left .tl-polaroid-inner {
+      transform: rotate(-3deg);
+    }
+
+    .tl-event.right .tl-polaroid-inner {
+      transform: rotate(3deg);
+    }
+
+    .tl-photo {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+    }
+
+    .tl-caption {
+      font-family: "Caveat", cursive;
+      font-size: 16px;
+      color: #333;
+      text-align: center;
+      margin-top: 6px;
+      line-height: 1.2;
+    }
+
+    /* Text side */
+    .tl-text {
+      width: 46%;
+      padding: 0 12px;
+    }
+
+    .tl-event.left .tl-text {
+      text-align: left;
+    }
+
+    .tl-event.right .tl-text {
+      text-align: right;
+    }
+
+    .tl-date {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f472b6;
+      letter-spacing: 0.03em;
+      margin-bottom: 4px;
+    }
+
+    .tl-desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.4;
+    }
+
+    /* Closing */
+    .tl-closing {
+      text-align: center;
+      padding: 0 24px 16px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 20px;
+      font-weight: 600;
+      font-family: "Manrope", sans-serif;
+      opacity: 0;
+      animation: wpFadeUp 0.6s 0.2s forwards;
+    }
+
+    .tl-next-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px auto 48px;
+      background: #f2f9fe;
+      color: #0a0a0a;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 32px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      animation: wpFadeUp 0.5s 0.4s forwards;
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "panda-blue": "#24668f",
+            "panda-dark": "#121212",
+            "panda-card": "#332f2f",
+            "panda-text": "#F2F9FE",
+            "panda-muted": "#ABB0BC",
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body style="background-color: #121212">
+  <!-- ════════ GIFT INTRO — ZIPPER REVEAL ════════ -->
+  <!-- Player de áudio -->
+  <audio
+    id="audioPlayer"
+    src="https://cdn.discordapp.com/attachments/752562292763132033/1514370486119694396/Maracuja_Slow_Sense.mp3?ex=6a2b1eeb&is=6a29cd6b&hm=ddfdaace075a2b3759aa771a81cf321070e3dcd5572999527f7bc936f1f968b9&"
+    loop
+    preload="auto"
+  ></audio>
+
+  <div id="giftIntro">
+    <!-- 2 wrap panels — V-shape clip-path applied via JS -->
+    <div id="wL">
+      <div class="wd">
+        <div class="wd-hrib"></div>
+      </div>
+    </div>
+    <div id="wR">
+      <div class="wd">
+        <div class="wd-hrib"></div>
+      </div>
+    </div>
+
+    <!-- Zipper pull tab -->
+    <div id="zipPull">
+      <div class="zp-ring"></div>
+      <div class="zp-body"></div>
+    </div>
+
+    <!-- Gift content (bow + text + hint) -->
+    <div id="giftContent">
+      <!-- Bow — SVG rosette -->
+      <div class="g-bow">
+        <svg viewBox="-65 -65 130 130" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="lg1" cx="35%" cy="30%" r="65%">
+              <stop offset="0%" stop-color="#7de0f5" />
+              <stop offset="55%" stop-color="#1a8ab3" />
+              <stop offset="100%" stop-color="#0a4f6e" />
+            </radialGradient>
+            <radialGradient id="lg2" cx="35%" cy="30%" r="65%">
+              <stop offset="0%" stop-color="#5bcde8" />
+              <stop offset="55%" stop-color="#1278a0" />
+              <stop offset="100%" stop-color="#083a54" />
+            </radialGradient>
+            <radialGradient id="knot" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#9ae8fa" />
+              <stop offset="40%" stop-color="#3DC4F4" />
+              <stop offset="100%" stop-color="#0a5a7a" />
+            </radialGradient>
+          </defs>
+
+          <!-- Ribbon tails (behind all loops) -->
+          <path d="M -5 10 Q -22 38 -28 60" stroke="#0a5070" stroke-width="11" fill="none" stroke-linecap="round" />
+          <path d="M  5 10 Q  22 38  28 60" stroke="#0a5070" stroke-width="11" fill="none" stroke-linecap="round" />
+          <path d="M -5 10 Q -22 38 -28 60" stroke="#3DC4F4" stroke-width="4" fill="none" stroke-linecap="round"
+            opacity="0.55" />
+          <path d="M  5 10 Q  22 38  28 60" stroke="#3DC4F4" stroke-width="4" fill="none" stroke-linecap="round"
+            opacity="0.55" />
+
+          <!-- Back-layer loops (darker, 4 diagonal) -->
+          <ellipse rx="36" ry="13" fill="url(#lg2)" transform="rotate(22.5)" opacity="0.85" />
+          <ellipse rx="36" ry="13" fill="url(#lg2)" transform="rotate(-22.5)" opacity="0.85" />
+          <ellipse rx="36" ry="13" fill="url(#lg2)" transform="rotate(67.5)" opacity="0.85" />
+          <ellipse rx="36" ry="13" fill="url(#lg2)" transform="rotate(-67.5)" opacity="0.85" />
+
+          <!-- Front-layer loops (brighter, 4 cardinal) -->
+          <ellipse rx="36" ry="13" fill="url(#lg1)" transform="rotate(0)" />
+          <ellipse rx="36" ry="13" fill="url(#lg1)" transform="rotate(90)" />
+          <ellipse rx="36" ry="13" fill="url(#lg1)" transform="rotate(45)" />
+          <ellipse rx="36" ry="13" fill="url(#lg1)" transform="rotate(-45)" />
+
+          <!-- Sheen strip on each front loop -->
+          <ellipse rx="18" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(0)   translate(10 -5)" />
+          <ellipse rx="18" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(90)  translate(10 -5)" />
+          <ellipse rx="18" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(45)  translate(10 -5)" />
+          <ellipse rx="18" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(-45) translate(10 -5)" />
+
+          <!-- Centre knot -->
+          <circle r="15" fill="#083a54" />
+          <circle r="12" fill="url(#knot)" />
+          <circle cx="-3" cy="-4" r="5" fill="rgba(255,255,255,0.35)" />
+        </svg>
+      </div>
+
+      <!-- Message -->
+      <div class="g-msg">
+        <div class="g-badge">✨ Uma surpresa especial</div>
+        <h1 class="g-title">Você recebeu um<br />presente especial</h1>
+        <p class="g-from">De Tiago, com amor 💌</p>
+      </div>
+
+      <!-- Arrows hint -->
+      <div class="g-hint">
+        <span class="g-hint-text">Toque para abrir</span>
+        <div class="g-arrows">
+          <svg class="g-arrow" viewBox="0 0 22 11">
+            <path d="M1 1 L11 10 L21 1" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <svg class="g-arrow" viewBox="0 0 22 11">
+            <path d="M1 1 L11 10 L21 1" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <svg class="g-arrow" viewBox="0 0 22 11">
+            <path d="M1 1 L11 10 L21 1" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-full flex flex-col min-h-screen" style="background-color: #121212">
+    <main class="flex-1">
+      <div class="max-w-[1400px] w-full mx-auto flex-1 flex flex-col px-0 py-0">
+        <div class="flex flex-1 items-center justify-center">
+          <div class="flex max-w-md w-full h-full relative overflow-hidden">
+            <div class="w-full h-full relative">
+              <!-- Main scrollable content -->
+              <div class="flex flex-col w-full h-full px-4 overflow-x-hidden overflow-y-auto" style="
+                    background-image: linear-gradient(
+                      rgb(36, 102, 143) 0%,
+                      rgb(36, 102, 143) 45%,
+                      rgb(25, 71, 100) 65%,
+                      rgb(18, 18, 18) 85%
+                    );
+                    background-size: 200% auto;
+                    background-repeat: no-repeat;
+                    background-attachment: scroll;
+                    background-color: rgb(18, 18, 18);
+                  ">
+                <div class="flex flex-col w-full h-full gap-5 pb-10">
+                  <!-- Header -->
+                  <div class="flex w-full items-center h-fit pt-2 justify-between text-[#F2F9FE] sticky top-0 z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      class="cursor-pointer">
+                      <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+                    <div class="flex max-h-[34px] h-fit">
+                      <div class="font-semibold break-words whitespace-pre-wrap text-[#F2F9FE]">
+                        Juntos para sempre ❤️
+                      </div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="1"></circle>
+                      <circle cx="19" cy="12" r="1"></circle>
+                      <circle cx="5" cy="12" r="1"></circle>
+                    </svg>
+                  </div>
+
+                  <!-- Photo + Player Section -->
+                  <div class="flex w-full flex-col min-h-[60%] flex-grow gap-4">
+                    <!-- Photo Carousel -->
+                    <div class="flex w-full justify-center items-center">
+                      <div class="relative w-full aspect-square max-w-[360px] shadow-black/10 rounded-lg shadow-xl">
+                        <div class="swiper absolute inset-0 w-full h-full rounded-lg overflow-hidden" id="photoSwiper">
+                          <div class="swiper-wrapper">
+                            <div class="swiper-slide w-full h-full">
+                              <div class="relative w-full h-full">
+                                <img alt="Foto do casal 1" class="object-cover w-full h-full"
+                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/68945161-00ba-409e-882c-fd1183a2ef18-ca5c62f381445f44d91cfd9ad2311e50.jpg" />
+                              </div>
+                            </div>
+                            <div class="swiper-slide w-full h-full">
+                              <div class="relative w-full h-full">
+                                <img alt="Foto do casal 2" class="object-cover w-full h-full"
+                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/a2e7c4e9-42d3-4979-ae74-6ce2e01155c3-q5qnrgxrhgoeonqye21m.jpeg" />
+                              </div>
+                            </div>
+                            <div class="swiper-slide w-full h-full">
+                              <div class="relative w-full h-full">
+                                <img alt="Foto do casal 3" class="object-cover w-full h-full"
+                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/cd17eea7-d91e-48e2-a7de-acc7a50c8f7e-3896db5ab0787ea2b35bc9986b516adb.jpg" />
+                              </div>
+                            </div>
+                            <div class="swiper-slide w-full h-full">
+                              <div class="relative w-full h-full">
+                                <img alt="Foto do casal 4" class="object-cover w-full h-full"
+                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/2fba59d3-eb4c-4bcb-aed1-3467f6053dcf-8e62abaee04424cd1b986d6fbed07001.jpg" />
+                              </div>
+                            </div>
+                            <div class="swiper-slide w-full h-full">
+                              <div class="relative w-full h-full">
+                                <img alt="Foto do casal 5" class="object-cover w-full h-full"
+                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/4212a0c9-ad62-445e-9e0a-c32468c01c82-eve-o-malley.jpg" />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="swiper-pagination"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Music Player -->
+                    <div class="flex p-1 flex-col w-full h-fit">
+                      <div class="flex w-full h-fit gap-2 flex-col">
+                        <div class="flex flex-col w-full h-fit gap-6">
+                          <!-- Song info row -->
+                          <div class="flex w-full justify-between items-center h-fit">
+                            <div class="flex flex-col w-[70%]">
+                              <h3 class="text-[#F2F9FE] font-extrabold text-[26px] w-full overflow-hidden">
+                                <div class="overflow-hidden whitespace-nowrap" style="width: 100%">
+                                  <span class="block overflow-hidden text-ellipsis">Maracujá</span>
+                                </div>
+                              </h3>
+                              <span class="text-[#F2F9FE]/90 text-base px-[3.7px] w-full overflow-hidden">
+                                <div class="overflow-hidden whitespace-nowrap" style="width: 100%">
+                                  <span class="block overflow-hidden text-ellipsis">Slow Sense</span>
+                                </div>
+                              </span>
+                            </div>
+                            <div class="h-fit flex ml-2">
+                              <div
+                                class="w-[35px] h-[35px] p-[6px] rounded-full flex items-center justify-center bg-[#F2F9FE]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                  fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+                                  stroke-linejoin="round" class="w-full h-full" style="color: rgb(36, 102, 143)">
+                                  <path d="M20 6 9 17l-5-5"></path>
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Progress bar -->
+                          <div class="flex w-full flex-col gap-2 h-fit">
+                            <div
+                              class="flex w-full max-h-[4px] min-h-[4px] rounded-lg bg-[#F2F9FE]/25 relative cursor-pointer"
+                              id="progressBar">
+                              <div class="absolute left-0 top-0 bg-[#F2F9FE] rounded-l-lg h-full" id="progressFill"
+                                style="width: 0%"></div>
+                              <div class="absolute h-[15px] w-[15px] rounded-full bg-[#F2F9FE] z-10 progress-thumb"
+                                id="progressThumb"
+                                style="left: calc(0% - 7.5px); top: 50%; transform: translateY(-50%)"></div>
+                            </div>
+                            <div class="flex w-full h-fit justify-between">
+                              <p class="text-[#F2F9FE]/90 text-xs" id="currentTime">0:00</p>
+                              <p class="text-[#F2F9FE]/90 text-xs" id="totalTime">-4:47</p>
+                            </div>
+                          </div>
+
+                          <!-- Controls -->
+                          <div class="flex justify-between items-center h-fit">
+                            <!-- Shuffle -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                              stroke-linejoin="round" class="w-6 h-6 text-[#F2F9FE] cursor-pointer">
+                              <path d="m18 14 4 4-4 4"></path>
+                              <path d="m18 2 4 4-4 4"></path>
+                              <path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22"></path>
+                              <path d="M2 6h1.972a4 4 0 0 1 3.6 2.2"></path>
+                              <path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45"></path>
+                            </svg>
+
+                            <div class="flex flex-row h-fit items-center justify-center gap-8">
+                              <!-- Skip back -->
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-7 h-7 text-[#F2F9FE] cursor-pointer">
+                                <path
+                                  d="M17.971 4.285A2 2 0 0 1 21 6v12a2 2 0 0 1-3.029 1.715l-9.997-5.998a2 2 0 0 1-.003-3.432z">
+                                </path>
+                                <path d="M3 20V4" fill="none"></path>
+                              </svg>
+
+                              <!-- Play/Pause button -->
+                              <div
+                                class="flex p-0 items-center justify-center min-w-[73px] min-h-[73px] rounded-full bg-[#F2F9FE] cursor-pointer"
+                                id="playBtn" onclick="togglePlay()">
+                                <!-- Pause icon (shown when playing) -->
+                                <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                  viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"
+                                  stroke-linecap="round" stroke-linejoin="round" style="color: rgb(36, 102, 143)">
+                                  <rect x="14" y="3" width="5" height="18" rx="1"></rect>
+                                  <rect x="5" y="3" width="5" height="18" rx="1"></rect>
+                                </svg>
+                                <!-- Play icon (shown when paused) -->
+                                <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                  viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"
+                                  stroke-linecap="round" stroke-linejoin="round"
+                                  style="color: rgb(36, 102, 143); display: none">
+                                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                              </div>
+
+                              <!-- Skip forward -->
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-7 h-7 text-[#F2F9FE] cursor-pointer">
+                                <path d="M21 4v16" fill="none"></path>
+                                <path
+                                  d="M6.029 4.285A2 2 0 0 0 3 6v12a2 2 0 0 0 3.029 1.715l9.997-5.998a2 2 0 0 0 .003-3.432z">
+                                </path>
+                              </svg>
+                            </div>
+
+                            <!-- Repeat -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                              stroke-linejoin="round" class="w-6 h-6 text-[#F2F9FE] cursor-pointer">
+                              <path d="m17 2 4 4-4 4"></path>
+                              <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+                              <path d="m7 22-4-4 4-4"></path>
+                              <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Counter Card ("Sobre o casal") -->
+                  <div class="flex flex-col gap-6 h-fit w-full mt-4">
+                    <div class="flex w-full min-h-[200px] h-fit items-center justify-center">
+                      <div class="flex flex-col bg-[#332f2f] h-fit w-full z-10 rounded-2xl">
+                        <!-- Card header with photo -->
+                        <div class="flex flex-col gap-6 rounded-t-2xl h-fit w-full p-4 relative overflow-hidden"
+                          style="min-height: 160px">
+                          <img alt="Foto do casal" class="rounded-t-2xl object-cover"
+                            style="position: absolute; height: 100%; width: 100%; inset: 0px"
+                            src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/c811abc1-33fd-4d03-8ec9-d44822223db6-f57a3077c9acfa82f8dece0492e7ba9c.jpg" />
+                          <div class="absolute inset-0 bg-black bg-opacity-20 rounded-t-2xl"></div>
+                          <div class="relative z-10">
+                            <span class="text-[#F2F9FE] font-semibold text-xl">Sobre o casal</span>
+                          </div>
+                          <div class="flex w-full min-h-[80px] relative z-10"></div>
+                        </div>
+
+                        <!-- Names + Counter -->
+                        <div class="flex gap-4 p-4 flex-col w-full">
+                          <div class="flex flex-col text-[#F2F9FE]">
+                            <span class="font-bold font-inter text-2xl">Tiago e Keisy</span>
+                            <span class="text-base text-[#ABB0BC]">Juntos desde 2023</span>
+                          </div>
+
+                          <!-- Counter grid -->
+                          <div class="grid gap-4 grid-cols-3">
+                            <div
+                              class="flex flex-col items-center p-4 rounded-xl border-2 border-b-[6px] border-[#262626]/60">
+                              <span class="text-2xl font-bold mb-1 text-[#F2F9FE]" id="cnt-anos">3</span>
+                              <span class="text-sm text-[#e6e1e5]">Anos</span>
+                            </div>
+                            <div
+                              class="flex flex-col items-center p-4 rounded-xl border-2 border-b-[6px] border-[#262626]/60">
+                              <span class="text-2xl font-bold mb-1 text-[#F2F9FE]" id="cnt-meses">8</span>
+                              <span class="text-sm text-[#e6e1e5]">Meses</span>
+                            </div>
+                            <div
+                              class="flex flex-col items-center p-4 rounded-xl border-2 border-b-[6px] border-[#262626]/60">
+                              <span class="text-2xl font-bold mb-1 text-[#F2F9FE]" id="cnt-dias">30</span>
+                              <span class="text-sm text-[#e6e1e5]">Dias</span>
+                            </div>
+                            <div
+                              class="flex flex-col items-center p-4 rounded-xl border-2 border-b-[6px] border-[#262626]/60">
+                              <span class="text-2xl font-bold mb-1 text-[#F2F9FE]" id="cnt-horas">11</span>
+                              <span class="text-sm text-[#e6e1e5]">Horas</span>
+                            </div>
+                            <div
+                              class="flex flex-col items-center p-4 rounded-xl border-2 border-b-[6px] border-[#262626]/60">
+                              <span class="text-2xl font-bold mb-1 text-[#F2F9FE]" id="cnt-min">26</span>
+                              <span class="text-sm text-[#e6e1e5]">Minutos</span>
+                            </div>
+                            <div
+                              class="flex flex-col items-center p-4 rounded-xl border-2 border-b-[6px] border-[#262626]/60">
+                              <span class="text-2xl font-bold mb-1 text-[#F2F9FE]" id="cnt-seg">39</span>
+                              <span class="text-sm text-[#e6e1e5]">Segundos</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Special Message -->
+                    <div class="flex w-full h-fit items-center justify-center">
+                      <div class="flex gap-5 p-4 flex-col h-fit w-full z-10 rounded-2xl"
+                        style="background-color: rgb(69, 151, 201)">
+                        <span class="font-bold text-[#F2F9FE] text-xl">Mensagem especial</span>
+                        <div class="font-extrabold text-[27px] leading-10 relative overflow-hidden" id="msgContainer"
+                          style="color: rgb(0, 0, 0); max-height: 160px">
+                          <div class="break-words whitespace-pre-wrap"
+                            style="overflow-wrap: break-word; word-break: break-word; hyphens: auto">
+                            E pensar que tudo começou do nada... ✨ Olha só pra gente agora: escrevendo nossa própria
+                            história, quebrando regras e sendo o casal mais incrível que eu conheço! Minha vida
+                            contigo é a melhor aventura, uma montanha-russa que eu nunca quero que pare! 🎢❤️ Minha
+                            missão diária? Acordar e fazer de tudo para ser o melhor namorado que você poderia sonhar
+                            em ter. Tenho o maior orgulho de te chamar de meu amor, e pode ter certeza: eu não te
+                            deixo escapar por nada nesse mundo. 😉 Você é: Meu sol em dias cinzentos. ☀️ Meu ar fresco
+                            no meio da correria. 🌬️ Minha noite de estrelas. Resumindo: Você é TUDO pra mim! Te amo.
+                            ❤️
+                          </div>
+                          <div class="absolute bottom-0 left-0 right-0 h-24 pointer-events-none message-fade"
+                            id="msgFade"></div>
+                        </div>
+                        <button onclick="toggleMessage()" id="msgBtn"
+                          class="bg-[#F2F9FE] rounded-3xl py-3 px-4 w-fit flex items-center font-bold text-sm cursor-pointer border-0">
+                          Mostrar Mensagem
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Photo Gallery ("Conheça") -->
+                    <div class="w-full h-fit items-center justify-center flex">
+                      <div class="flex w-full flex-col gap-4 rounded-2xl bg-[#332f2f] p-4 z-10">
+                        <span class="text-xl font-bold text-white">Conheça Tiago e Keisy</span>
+                        <div class="mt-1 grid grid-cols-3 gap-3">
+                          <div
+                            class="relative photo-grid-item w-full overflow-hidden rounded-lg cursor-pointer category-mini-card"
+                            onclick="openGallery(0)">
+                            <img alt="Nossos Dates" class="object-cover bg-neutral-700 w-full h-full"
+                              src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/fff6fadf-2b29-473d-976d-af034cb6be08-994b8582db6b8017a67d61d96f1c3dd7.jpg" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                            </div>
+                            <div class="absolute bottom-2 left-2">
+                              <span class="text-sm font-bold text-white drop-shadow-md whitespace-pre-wrap">Nossos
+                                Dates</span>
+                            </div>
+                          </div>
+
+                          <div
+                            class="relative photo-grid-item w-full overflow-hidden rounded-lg cursor-pointer category-mini-card"
+                            onclick="openGallery(1)">
+                            <img alt="Fotos aleatórias" class="object-cover bg-neutral-700 w-full h-full"
+                              src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/a773c634-2ffc-4623-b592-1774dffa8aeb-0d6cae3bdd8b023b8519c19330fc2da7.jpg" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                            </div>
+                            <div class="absolute bottom-2 left-2">
+                              <span class="text-sm font-bold text-white drop-shadow-md whitespace-pre-wrap">Fotos
+                                aleatórias</span>
+                            </div>
+                          </div>
+
+                          <div
+                            class="relative photo-grid-item w-full overflow-hidden rounded-lg cursor-pointer category-mini-card"
+                            onclick="openGallery(2)">
+                            <img alt="Primeira viagem" class="object-cover bg-neutral-700 w-full h-full"
+                              src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/70bbf773-59ed-47fb-b232-15c2b05e370f-bf1fcd3cecc3d48bddf3b848afc6bebe.jpg" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                            </div>
+                            <div class="absolute bottom-2 left-2">
+                              <span class="text-sm font-bold text-white drop-shadow-md whitespace-pre-wrap">Primeira
+                                viagem</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Achievements — locked feature -->
+                    <div class="relative flex w-full h-fit items-center justify-center">
+                      <div class="relative flex w-full flex-col gap-4 rounded-2xl p-4 z-10 bg-[#282828] overflow-hidden"
+                        style="user-select: none">
+                        <!-- Blurred ghost content (preview underneath) -->
+                        <div style="filter: blur(3px); opacity: 0.35; pointer-events: none">
+                          <div class="flex items-center justify-between mb-4">
+                            <span class="font-bold text-[#F2F9FE] text-xl">Conquistas</span>
+                            <span
+                              class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#121212] text-[#ABB0BC]">17/30</span>
+                          </div>
+                          <div class="grid grid-cols-4 gap-3">
+                            <div class="w-full aspect-square rounded-xl achievement-gold p-[1px]">
+                              <div class="w-full h-full rounded-[11px] achievement-inner-gold"></div>
+                            </div>
+                            <div class="w-full aspect-square rounded-xl achievement-purple p-[1px]">
+                              <div class="w-full h-full rounded-[11px] achievement-inner-purple"></div>
+                            </div>
+                            <div class="w-full aspect-square rounded-xl achievement-purple p-[1px]">
+                              <div class="w-full h-full rounded-[11px] achievement-inner-purple"></div>
+                            </div>
+                            <div class="w-full aspect-square rounded-xl achievement-gold p-[1px]">
+                              <div class="w-full h-full rounded-[11px] achievement-inner-gold"></div>
+                            </div>
+                            <div class="w-full aspect-square rounded-xl p-[1px]" style="background: rgb(40, 40, 40)">
+                              <div class="w-full h-full rounded-[11px]" style="background: rgb(20, 20, 20)"></div>
+                            </div>
+                            <div class="w-full aspect-square rounded-xl p-[1px]" style="background: rgb(40, 40, 40)">
+                              <div class="w-full h-full rounded-[11px]" style="background: rgb(20, 20, 20)"></div>
+                            </div>
+                            <div class="w-full aspect-square rounded-xl p-[1px]" style="background: rgb(40, 40, 40)">
+                              <div class="w-full h-full rounded-[11px]" style="background: rgb(20, 20, 20)"></div>
+                            </div>
+                            <div class="w-full aspect-square rounded-xl p-[1px]" style="background: rgb(40, 40, 40)">
+                              <div class="w-full h-full rounded-[11px]" style="background: rgb(20, 20, 20)"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Lock overlay -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl"
+                          style="background: rgba(18, 18, 18, 0.55); backdrop-filter: blur(1px)">
+                          <!-- Lock icon -->
+                          <div class="flex items-center justify-center w-14 h-14 rounded-full" style="
+                                background: rgba(255, 255, 255, 0.07);
+                                border: 1.5px solid rgba(255, 255, 255, 0.12);
+                              ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                              fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8" stroke-linecap="round"
+                              stroke-linejoin="round">
+                              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                          </div>
+                          <span class="text-white font-bold text-base">Conquistas</span>
+                          <span class="text-xs font-semibold px-3 py-1 rounded-full" style="
+                                background: rgba(255, 255, 255, 0.08);
+                                color: rgba(255, 255, 255, 0.5);
+                                letter-spacing: 0.06em;
+                                text-transform: uppercase;
+                              ">
+                            Em breve
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Wrapped Banner -->
+                    <div class="relative flex w-full h-fit items-center justify-center">
+                      <div class="flex gap-5 p-4 flex-col bg-[#010101] h-fit w-full z-10 rounded-2xl">
+                        <div class="flex w-full h-fit items-center justify-center overflow-hidden">
+                          <div
+                            class="relative flex items-center justify-center rounded-2xl bg-[#1B1F26] w-full h-fit cursor-pointer"
+                            onclick="openWrapped()">
+                            <img alt="wrapped-banner" class="w-full h-auto rounded-2xl"
+                              src="https://media.lovepanda.com.br/static/br/images/sections/wrapped-banner.png" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══════════════════ WRAPPED OVERLAY ═══════════════════ -->
+  <div id="wrappedOverlay">
+    <!-- Animated stars background -->
+    <svg id="wpStars" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <!-- Progress bars -->
+    <div id="wpBars"></div>
+
+    <!-- Header: close only -->
+    <div id="wpHeader">
+      <button class="wp-btn" onclick="closeWrapped()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Tap zones -->
+    <div id="wpTapL" onclick="wpPrev()"></div>
+    <div id="wpTapR" onclick="wpNext()"></div>
+
+    <!-- Slide content (rendered by JS) -->
+    <div id="wpSlide"></div>
+  </div>
+
+  <!-- ═══════════════════ FULL-SCREEN GALLERY (Stories style) ═══════════════════ -->
+  <div id="galleryView">
+    <!-- Background photo -->
+    <div id="galleryBg"></div>
+
+    <!-- Tap left/right zones -->
+    <div id="tapLeft" onclick="galPrev()"></div>
+    <div id="tapRight" onclick="galNext()"></div>
+
+    <!-- Story progress bars -->
+    <div id="storyBarsContainer"></div>
+
+    <!-- Top header -->
+    <div id="galleryHeader">
+      <button onclick="closeGallery()" class="g-action" style="width: 34px; height: 34px; flex-shrink: 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white"
+          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+      </button>
+      <span id="galCategoryTitle"
+        style="color: #fff; font-weight: 700; font-size: 15px; text-align: center; flex: 1; padding: 0 8px"></span>
+      <span id="galPhotoCounter"
+        style="color: rgba(255, 255, 255, 0.7); font-size: 13px; font-weight: 600; flex-shrink: 0"></span>
+    </div>
+
+    <!-- Bottom footer: chip + actions -->
+    <div id="galleryFooter">
+      <div id="categoryChip">
+        <span id="categoryChipTitle"></span>
+        <span id="categoryChipCount"></span>
+      </div>
+
+      <div id="galleryActions">
+        <!-- Share icon -->
+        <button class="g-action">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+          </svg>
+        </button>
+        <!-- Heart icon -->
+        <button class="g-action">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
+        <!-- Expand icon -->
+        <button class="g-action" onclick="toggleSwitcher()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Category switcher (slides up on grid icon click) -->
+    <div id="categorySwitcher"></div>
+  </div>
+
+  <script>
+    // ── Gift intro — drag to unzip (V-shape opening) ─────────
+    (function () {
+      const intro = document.getElementById("giftIntro");
+      const wL = document.getElementById("wL");
+      const wR = document.getElementById("wR");
+      const zipPull = document.getElementById("zipPull");
+      const giftContent = document.getElementById("giftContent");
+
+      let curP = 0;
+      let dragging = false;
+      let dragOriginY = 0;
+
+      // Apply V-shape at progress p (0 = closed, 1 = fully open)
+      function apply(p) {
+        curP = Math.max(0, Math.min(1, p));
+
+        // Zipper tip Y position in vh
+        const zy = (curP * 100).toFixed(2);
+
+        // Half-width of the V opening at the TOP of the screen (in vw).
+        // At p=1 the V must be fully open (50vw each side), so slope = 50vw / 1
+        // Using a slight over-shoot (55) ensures the edges fully exit at p≈0.9
+        const hw = Math.min(50, curP * 55).toFixed(2);
+
+        // Left panel (#wL starts at screen left = 0, so vw coords match screen coords)
+        // Visible area = left half MINUS the left lobe of the V
+        wL.style.clipPath = `polygon(0 0, ${50 - parseFloat(hw)}vw 0, 50vw ${zy}vh, 50vw 100vh, 0 100vh)`;
+
+        // Right panel (#wR starts at screen 50vw, so clip coords are element-relative:
+        //   0  = screen 50vw (left edge of #wR = screen centre)
+        //   50vw = screen 100vw (right edge of #wR = screen right)
+        //   ${hw}vw = screen 50+hw vw (right lobe of V at top)
+        //   0 ${zy}vh = zipper tip on left edge of #wR = screen centre at height zy)
+        wR.style.clipPath = `polygon(${hw}vw 0, 50vw 0, 50vw 100vh, 0 100vh, 0 ${zy}vh)`;
+
+        // Pull tab follows the tip
+        zipPull.style.transform = `translateX(-50%) translateY(${zy}vh)`;
+
+        // Fade out content as zip passes centre
+        const fade = curP > 0.28 ? Math.max(0, 1 - (curP - 0.28) / 0.22) : 1;
+        giftContent.style.opacity = fade.toFixed(3);
+      }
+
+      // Smooth animate curP → target, call done() when finished
+      function animateTo(target, done) {
+        const from = curP;
+        const dist = target - from;
+        const dur = Math.max(160, Math.abs(dist) * 700);
+        const t0 = performance.now();
+        const opening = dist > 0;
+
+        (function step(ts) {
+          const t = Math.min(1, (ts - t0) / dur);
+          const e = opening ? 1 - (1 - t) ** 3 : t * (2 - t);
+          apply(from + dist * e);
+          if (t < 1) requestAnimationFrame(step);
+          else if (done) done();
+        })(t0);
+      }
+
+      function startDrag(clientY) {
+        dragging = true;
+        dragOriginY = clientY - curP * window.innerHeight;
+      }
+      function moveDrag(clientY) {
+        if (!dragging) return;
+        apply((clientY - dragOriginY) / window.innerHeight);
+      }
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        if (curP >= 0.52)
+          animateTo(1, () =>
+            setTimeout(() => {
+              intro.style.display = "none";
+              // Interação do usuário confirmada — inicia áudio real
+              audio.play().catch(() => {});
+            }, 80),
+          );
+        else animateTo(0, null);
+      }
+
+      // Touch
+      intro.addEventListener(
+        "touchstart",
+        (e) => {
+          e.preventDefault();
+          startDrag(e.touches[0].clientY);
+        },
+        { passive: false },
+      );
+      intro.addEventListener(
+        "touchmove",
+        (e) => {
+          e.preventDefault();
+          moveDrag(e.touches[0].clientY);
+        },
+        { passive: false },
+      );
+      intro.addEventListener("touchend", () => endDrag(), { passive: true });
+      intro.addEventListener("touchcancel", () => endDrag(), { passive: true });
+
+      // Mouse
+      intro.addEventListener("mousedown", (e) => startDrag(e.clientY));
+      window.addEventListener("mousemove", (e) => {
+        if (dragging) moveDrag(e.clientY);
+      });
+      window.addEventListener("mouseup", () => endDrag());
+
+      // Initialise panels to fully closed
+      apply(0);
+    })();
+
+    // ── Swiper ──────────────────────────────────────────────
+    const swiper = new Swiper("#photoSwiper", {
+      loop: true,
+      pagination: { el: ".swiper-pagination", clickable: true },
+      autoplay: { delay: 4000, disableOnInteraction: false },
+    });
+
+    // ── Countdown timer ──────────────────────────────────────
+    const startDate = new Date("2023-11-11T00:00:00");
+    function updateCounter() {
+      const now = new Date();
+      let diff = now - startDate;
+      const sec = Math.floor(diff / 1000) % 60;
+      const min = Math.floor(diff / 60000) % 60;
+      const hrs = Math.floor(diff / 3600000) % 24;
+      const totalDays = Math.floor(diff / 86400000);
+      const anos = Math.floor(totalDays / 365);
+      const remDays = totalDays % 365;
+      const meses = Math.floor(remDays / 30);
+      const dias = remDays % 30;
+      document.getElementById("cnt-anos").textContent = anos;
+      document.getElementById("cnt-meses").textContent = meses;
+      document.getElementById("cnt-dias").textContent = dias;
+      document.getElementById("cnt-horas").textContent = String(hrs).padStart(2, "0");
+      document.getElementById("cnt-min").textContent = String(min).padStart(2, "0");
+      document.getElementById("cnt-seg").textContent = String(sec).padStart(2, "0");
+    }
+    updateCounter();
+    setInterval(updateCounter, 1000);
+
+    // ── HTML5 Audio Player ────────────────────────────────────
+    const audio = document.getElementById("audioPlayer");
+
+    function fmt(s) {
+      s = Math.floor(s || 0);
+      return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    }
+
+    function updatePlayerUI() {
+      const cur = audio.currentTime || 0;
+      const dur = audio.duration   || 0;
+      const pct = dur ? (cur / dur) * 100 : 0;
+      document.getElementById("progressFill").style.width  = pct + "%";
+      document.getElementById("progressThumb").style.left  = "calc(" + pct + "% - 7.5px)";
+      document.getElementById("currentTime").textContent   = fmt(cur);
+      document.getElementById("totalTime").textContent     = dur ? "-" + fmt(dur - cur) : "-0:00";
+    }
+
+    audio.addEventListener("timeupdate",     updatePlayerUI);
+    audio.addEventListener("loadedmetadata", updatePlayerUI);
+
+    audio.addEventListener("play",  () => {
+      document.getElementById("pauseIcon").style.display = "";
+      document.getElementById("playIcon").style.display  = "none";
+    });
+    audio.addEventListener("pause", () => {
+      document.getElementById("pauseIcon").style.display = "none";
+      document.getElementById("playIcon").style.display  = "";
+    });
+
+    function togglePlay() {
+      audio.paused ? audio.play() : audio.pause();
+    }
+
+    // Seek on progress bar click
+    document.getElementById("progressBar").addEventListener("click", function (e) {
+      if (!audio.duration) return;
+      audio.currentTime = ((e.clientX - this.getBoundingClientRect().left) / this.offsetWidth) * audio.duration;
+    });
+
+    // Estado inicial — ícone de play (ainda sem interação)
+    document.getElementById("pauseIcon").style.display = "none";
+    document.getElementById("playIcon").style.display  = "";
+
+    // ── Show/hide message ─────────────────────────────────────
+    let msgExpanded = false;
+    function toggleMessage() {
+      msgExpanded = !msgExpanded;
+      const container = document.getElementById("msgContainer");
+      const fade = document.getElementById("msgFade");
+      const btn = document.getElementById("msgBtn");
+      if (msgExpanded) {
+        container.style.maxHeight = "none";
+        fade.style.display = "none";
+        btn.textContent = "Ocultar Mensagem";
+      } else {
+        container.style.maxHeight = "160px";
+        fade.style.display = "";
+        btn.textContent = "Mostrar Mensagem";
+      }
+    }
+
+    // ═══════════════════ WRAPPED ═══════════════════════════════
+
+    const HOURS_TOTAL = Math.floor((new Date() - new Date("2023-11-11T00:00:00")) / 3600000);
+
+    const WP_SLIDES = [
+      {
+        bg: "wp-bg-blue",
+        isIntro: true,
+        render: () => `
+        <video id="introVideo" class="intro-video" src="intro.mp4"
+          autoplay playsinline muted preload="auto"
+          disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
+        </video>`,
+        onEnter: () => {
+          document.getElementById("wpSlide").classList.add("is-intro");
+          wpStopTimer();
+          const vid = document.getElementById("introVideo");
+          if (vid) {
+            vid.addEventListener("ended", () => wpNext(), { once: true });
+            // Fallback if video fails to load/play
+            setTimeout(() => {
+              if (vid && !vid.ended) wpNext();
+            }, 12000);
+          }
+        },
+      },
+      {
+        bg: "wp-bg-hours",
+        render: () => `
+        <div class="wp-kicker">vocês ficaram juntos</div>
+        <div class="wp-number" id="wpCounter">0</div>
+        <div class="wp-unit">horas juntos</div>`,
+        onEnter: () => setTimeout(() => animateCounter("wpCounter", 0, HOURS_TOTAL, 2400), 400),
+      },
+      {
+        bg: "wp-bg-teal",
+        render: () => {
+          const start = new Date("2023-11-11");
+          const now = new Date();
+          const days = Math.floor((now - start) / 86400000);
+          return `
+          <div class="wp-kicker">isso representa</div>
+          <div class="wp-number" id="wpDaysCnt">0</div>
+          <div class="wp-unit">dias de amor</div>
+          <div class="wp-pill">desde 11 de novembro de 2023</div>`;
+        },
+        onEnter: () => {
+          const days = Math.floor((new Date() - new Date("2023-11-11")) / 86400000);
+          animateCounter("wpDaysCnt", 0, days, 1800);
+        },
+      },
+      {
+        bg: "wp-bg-pink",
+        isTimeline: true,
+        render: () => {
+          const B = "https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/";
+          const events = [
+            {
+              date: "Setembro 2023",
+              caption: "No aniversário da Mariana",
+              desc: "Nossas almas se encontraram pela primeira vez",
+              img: "33b1b0cd-683b-45db-938c-3611beaebd8c-f9c75465a503091897c70da1dcc2da75.jpg",
+              side: "left",
+            },
+            {
+              date: "Outubro 2023",
+              caption: "Melhor decisão da minha vida",
+              desc: "Enviei a primeira mensagem",
+              img: "dd0fbdb4-2147-49c8-b989-d74b91460054-sem-titulo.jpg",
+              side: "right",
+            },
+            {
+              date: "Outubro 2023",
+              caption: "Nosso lugar preferido",
+              desc: "Primeiro encontro",
+              img: "b3584887-9f95-431a-b819-3bf2c5876652-40d5226377679f32711f9000ed00d04f.jpg",
+              side: "left",
+            },
+            {
+              date: "Novembro 2023",
+              caption: "Nunca fiquei tão nervoso",
+              desc: "Nosso primeiro beijo",
+              img: "fd7dd361-8cae-4798-b455-0f7bda7ccaa0-88c6133b3126db35ed4fb73635ff2988.jpg",
+              side: "right",
+            },
+            {
+              date: "Novembro 2023",
+              caption: "Ainda estou",
+              desc: "Eu já estava perdidamente apaixonado",
+              img: "6ee91254-c19b-4970-a251-f2ea3abeeab4-9d0074b7abcdbf676277bd17cb3b17cb.jpg",
+              side: "left",
+            },
+            {
+              date: "Dezembro 2023",
+              caption: "São minha família agora",
+              desc: "Conheci sua família pela primeira vez",
+              img: "ef5fa066-0bd6-4fbf-8a16-6639fbfc289d-5d75a080a39de2ec6afeb1d692b38c82.jpg",
+              side: "right",
+            },
+            {
+              date: "Janeiro 2024",
+              caption: "Caldas Novas",
+              desc: "Primeira viagem juntos",
+              img: "5b3d56f8-4894-4155-a1b9-905f0ddb04c8-bb15343f27edd069a6a0f315617dbfb6.jpg",
+              side: "left",
+            },
+            {
+              date: "Novembro 2023",
+              caption: "A oficialização de algo único",
+              desc: "Pedido de namoro",
+              img: "df5bd547-4d15-4b62-94c3-7fa9954edd72-5a86ecd5bbc802c835b61ae6361f16cf.jpg",
+              side: "right",
+            },
+          ];
+          const heart = `<svg width="18" height="18" viewBox="0 0 24 24" fill="#F472B6" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+          const eventsHtml = events
+            .map(
+              (e, i) => `
+          <div class="tl-event ${e.side}" style="animation-delay:${0.1 + i * 0.08}s">
+            <div class="tl-polaroid">
+              <div class="tl-polaroid-inner">
+                <img class="tl-photo" src="${B}${e.img}" alt="${e.caption}" loading="lazy">
+                <p class="tl-caption">${e.caption}</p>
+              </div>
+            </div>
+            <div class="tl-heart">${heart}</div>
+            <div class="tl-text">
+              <p class="tl-date">${e.date}</p>
+              <p class="tl-desc">${e.desc}</p>
+            </div>
+          </div>`,
+            )
+            .join("");
+          return `<div class="tl-inner">
+          <div class="tl-line"></div>
+          <div class="tl-title">
+            <h1>Nossa Jornada</h1>
+            <p>Cada momento que nos trouxe até aqui</p>
+          </div>
+          ${eventsHtml}
+          <p class="tl-closing">E estamos apenas começando!</p>
+          <button class="tl-next-btn" onclick="wpNext()">Próxima Seção →</button>
+        </div>`;
+        },
+        onEnter: () => {
+          document.getElementById("wpSlide").classList.add("is-timeline");
+          document.getElementById("wpSlide").scrollTop = 0;
+        },
+      },
+      {
+        bg: "wp-bg-rose",
+        render: () => `
+        <div class="wp-kicker">vocês fazem parte de apenas</div>
+        <div class="wp-pct">27%</div>
+        <div class="wp-unit" style="-webkit-text-fill-color:#fff">dos casais no mundo 💑</div>
+        <div class="wp-pill">Juntos, vocês são parte de algo extraordinário</div>`,
+      },
+      {
+        bg: "wp-bg-amber",
+        render: () => `
+        <div class="wp-kicker">a trilha sonora de vocês</div>
+        <img class="wp-album-art" src="https://img.youtube.com/vi/qAuSexGQoug/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/qAuSexGQoug/hqdefault.jpg'">
+        <div class="wp-song-title" style="margin-top:20px">Maracujá</div>
+        <div class="wp-song-artist">Slow Sense</div>`,
+      },
+      {
+        bg: "wp-bg-green",
+        render: () => `
+        <div class="wp-kicker">vocês guardaram</div>
+        <div class="wp-number">28</div>
+        <div class="wp-unit">fotos juntos</div>
+        <div class="wp-pill">em 3 álbuns especiais 📸</div>`,
+      },
+      {
+        bg: "wp-bg-purple",
+        render: () => `
+        <div class="wp-kicker">vocês já desbloquearam</div>
+        <div class="wp-number">17</div>
+        <div class="wp-unit">conquistas incríveis</div>
+        <div class="wp-pill">de 30 possíveis 🏆</div>`,
+      },
+      {
+        bg: "wp-bg-rose",
+        render: () => `
+        <div class="wp-kicker">a mensagem de vocês</div>
+        <div class="wp-title" style="font-size:20px;line-height:1.5;max-width:320px">
+          "E pensar que tudo começou do nada... ✨"
+        </div>
+        <div class="wp-subtitle" style="margin-top:16px">Tiago para Keisy</div>`,
+      },
+      {
+        bg: "wp-bg-teal",
+        render: () => {
+          const start = new Date("2023-11-11");
+          const target = new Date("2024-11-11"); // 1 ano
+          const now = new Date();
+          const next = new Date("2025-11-11"); // próximo: 2 anos
+          const daysLeft = Math.ceil((next - now) / 86400000);
+          return `
+          <div class="wp-kicker">próximo marco</div>
+          <div class="wp-title">2 Anos Juntos 👑</div>
+          <div class="wp-number" id="wpNextCnt">0</div>
+          <div class="wp-unit">dias restantes</div>`;
+        },
+        onEnter: () => {
+          const daysLeft = Math.ceil((new Date("2025-11-11") - new Date()) / 86400000);
+          animateCounter("wpNextCnt", 0, daysLeft, 1500);
+        },
+      },
+      {
+        bg: "wp-bg-blue",
+        render: () => `
+        <div class="wp-kicker">o resumo de tudo</div>
+        <div class="wp-number">${HOURS_TOTAL.toLocaleString("pt-BR")}</div>
+        <div class="wp-unit">horas juntos ❤️</div>
+        <div class="wp-pill">Tiago & Keisy · desde 2023</div>
+        <div class="wp-subtitle" style="margin-top:24px;animation-delay:0.8s">e muitos ainda por vir 🚀</div>`,
+      },
+    ];
+
+    // ── Intro: nothing to start (video handles itself) ────────
+    function startIntroParticles() { }
+    function stopIntroParticles() {
+      // Pause video if still playing when leaving slide
+      const vid = document.getElementById("introVideo");
+      if (vid) vid.pause();
+    }
+
+    // ── Counter animation ─────────────────────────────────────
+    function animateCounter(id, from, to, duration) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min(1, (now - start) / duration);
+        const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+        const val = Math.round(from + (to - from) * ease);
+        el.textContent = val.toLocaleString("pt-BR");
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // ── Shooting stars ────────────────────────────────────────
+    function spawnStar(svg) {
+      const ns = "http://www.w3.org/2000/svg";
+      const defs =
+        svg.querySelector("defs") ||
+        (() => {
+          const d = document.createElementNS(ns, "defs");
+          svg.appendChild(d);
+          return d;
+        })();
+      const gid = "sg" + Math.random().toString(36).slice(2);
+      const grad = document.createElementNS(ns, "linearGradient");
+      grad.setAttribute("id", gid);
+      grad.setAttribute("x1", "0%");
+      grad.setAttribute("y1", "0%");
+      grad.setAttribute("x2", "100%");
+      grad.setAttribute("y2", "100%");
+      const s1 = document.createElementNS(ns, "stop");
+      s1.setAttribute("offset", "0%");
+      s1.setAttribute("style", "stop-color:#a78bfa;stop-opacity:0");
+      const s2 = document.createElementNS(ns, "stop");
+      s2.setAttribute("offset", "100%");
+      s2.setAttribute("style", "stop-color:#60a5fa;stop-opacity:1");
+      grad.appendChild(s1);
+      grad.appendChild(s2);
+      defs.appendChild(grad);
+
+      const W = window.innerWidth,
+        H = window.innerHeight;
+      const x = Math.random() * W;
+      const y = Math.random() * H * 0.6;
+      const len = 40 + Math.random() * 80;
+      const angle = 120 + Math.random() * 30;
+      const delay = Math.random() * 3000;
+      const dur = 1200 + Math.random() * 1200;
+
+      const rect = document.createElementNS(ns, "rect");
+      rect.setAttribute("x", x);
+      rect.setAttribute("y", y);
+      rect.setAttribute("width", len);
+      rect.setAttribute("height", 1.5);
+      rect.setAttribute("fill", `url(#${gid})`);
+      rect.setAttribute("transform", `rotate(${angle},${x + len / 2},${y})`);
+      rect.style.opacity = "0";
+      svg.appendChild(rect);
+
+      let start = null;
+      function anim(t) {
+        if (!start) start = t + delay;
+        const elapsed = t - start;
+        if (elapsed < 0) {
+          requestAnimationFrame(anim);
+          return;
+        }
+        const p = elapsed / dur;
+        if (p > 1) {
+          rect.remove();
+          grad.remove();
+          return;
+        }
+        const ep = p < 0.1 ? p / 0.1 : p < 0.8 ? 1 : 1 - (p - 0.8) / 0.2;
+        rect.style.opacity = ep;
+        rect.setAttribute("transform", `rotate(${angle},${x + len / 2},${y}) translate(${-p * 90},${p * 55})`);
+        requestAnimationFrame(anim);
+      }
+      requestAnimationFrame(anim);
+    }
+
+    let starInterval = null;
+    function startStars() {
+      const svg = document.getElementById("wpStars");
+      svg.innerHTML = "<defs></defs>";
+      starInterval = setInterval(() => spawnStar(svg), 400);
+    }
+    function stopStars() {
+      clearInterval(starInterval);
+      document.getElementById("wpStars").innerHTML = "";
+    }
+
+    // ── Wrapped slide engine ──────────────────────────────────
+    let wpIdx = 0;
+    let wpRafId = null;
+    let wpTimerStart = null;
+    const WP_SLIDE_MS = 5000;
+
+    function wpStopTimer() {
+      if (wpRafId) {
+        cancelAnimationFrame(wpRafId);
+        wpRafId = null;
+      }
+    }
+
+    function wpStartTimer() {
+      wpStopTimer();
+      wpTimerStart = performance.now();
+      function tick(now) {
+        const pct = Math.min(100, ((now - wpTimerStart) / WP_SLIDE_MS) * 100);
+        const fills = document.querySelectorAll(".wp-bar-fill");
+        if (fills[wpIdx]) fills[wpIdx].style.width = pct + "%";
+        if (pct >= 100) {
+          wpNext();
+        } else {
+          wpRafId = requestAnimationFrame(tick);
+        }
+      }
+      wpRafId = requestAnimationFrame(tick);
+    }
+
+    function renderWpBars() {
+      const c = document.getElementById("wpBars");
+      c.innerHTML = WP_SLIDES.map(
+        (_, i) => `<div class="wp-bar"><div class="wp-bar-fill" style="width:${i < wpIdx ? 100 : 0}%"></div></div>`,
+      ).join("");
+    }
+
+    function renderWpSlide() {
+      stopIntroParticles();
+      const slide = WP_SLIDES[wpIdx];
+      const el = document.getElementById("wpSlide");
+      el.className = ""; // reset (removes is-timeline, is-intro etc.)
+      el.innerHTML = slide.render();
+
+      // Apply bg gradient to overlay
+      const overlay = document.getElementById("wrappedOverlay");
+      overlay.className = overlay.className.replace(/wp-bg-\S+/g, "").trim();
+      overlay.classList.add("open", slide.bg);
+
+      renderWpBars();
+      if (slide.onEnter) setTimeout(slide.onEnter, 80);
+
+      // Timeline slide: no auto-advance (user scrolls + taps "Próxima Seção")
+      if (slide.isTimeline) {
+        wpStopTimer();
+        // Fill the bar fully so it looks "active"
+        const fills = document.querySelectorAll(".wp-bar-fill");
+        if (fills[wpIdx]) fills[wpIdx].style.width = "50%";
+      } else {
+        wpStartTimer();
+      }
+    }
+
+    function wpNext() {
+      wpStopTimer();
+      if (wpIdx < WP_SLIDES.length - 1) {
+        wpIdx++;
+        renderWpSlide();
+      } else {
+        closeWrapped();
+      }
+    }
+
+    function wpPrev() {
+      wpStopTimer();
+      if (wpIdx > 0) {
+        wpIdx--;
+        renderWpSlide();
+      }
+    }
+
+    function openWrapped() {
+      wpIdx = 0;
+      document.getElementById("wrappedOverlay").classList.add("open");
+      document.body.style.overflow = "hidden";
+      renderWpSlide();
+      startStars();
+    }
+
+    function closeWrapped() {
+      wpStopTimer();
+      stopStars();
+      stopIntroParticles();
+      document.getElementById("wrappedOverlay").classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    // Touch swipe left/right on wrapped
+    (function () {
+      const ov = document.getElementById("wrappedOverlay");
+      let sx = 0;
+      ov.addEventListener(
+        "touchstart",
+        (e) => {
+          sx = e.touches[0].clientX;
+        },
+        { passive: true },
+      );
+      ov.addEventListener(
+        "touchend",
+        (e) => {
+          const dx = e.changedTouches[0].clientX - sx;
+          if (Math.abs(dx) > 50) dx < 0 ? wpNext() : wpPrev();
+        },
+        { passive: true },
+      );
+    })();
+
+    document.addEventListener("keydown", (e) => {
+      if (!document.getElementById("wrappedOverlay").classList.contains("open")) return;
+      if (e.key === "ArrowRight" || e.key === " ") wpNext();
+      if (e.key === "ArrowLeft") wpPrev();
+      if (e.key === "Escape") closeWrapped();
+    });
+
+    // ── Gallery (Full-screen Stories style) ──────────────────
+    const BASE = "https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/";
+    const GALLERIES = [
+      {
+        title: "Nossos Dates",
+        cover: BASE + "fff6fadf-2b29-473d-976d-af034cb6be08-994b8582db6b8017a67d61d96f1c3dd7.jpg",
+        photos: [
+          BASE + "2f0d11c9-2f1e-4131-bbc5-402c8c0b3481-3bc1fbda2a9ac431bef7d8cfa73d4a1e.jpg.png",
+          BASE + "b52c203a-e771-4d85-8cce-c846f1c270c6-8cb6f7dca9ccc8f03f652b56596ee53d.jpg.png",
+          BASE + "5e95d41b-9613-4838-9b72-ab2439a199fa-034b62012f69ccf0a15f1579ecdfd3ca.jpg.png",
+          BASE + "91de1f6b-f59d-4476-9b5b-83fb1d033f69-6d97864849aa6d73b9849325406758ed.0000000.jpg.png",
+          BASE + "fd306194-e052-4be5-adfc-21bfc01b5163-76aca3e40aa7f4138729bff29294ba5b.jpg.png",
+          BASE + "7495ceaa-8e31-459e-95a6-c1354253207e-018abdd9480269f0e0bfc52e7449d5b4.jpg.png",
+          BASE + "46096314-69c5-4e59-8ceb-343d5428ed7a-ee4e9475e7b0d09e1dd99bae6f4c468c.jpg.png",
+          BASE + "61dc9e23-1cd3-4b83-8982-0de06a1129c0-48fe4cfaa7947679b49c0e0af5b708e6.jpg.png",
+          BASE + "dea73bbd-4d1b-48bd-aef9-eb2455c51577-45ea62fbd1855a0f672bb8c4f2e0b168.jpg.png",
+        ],
+      },
+      {
+        title: "Fotos aleatórias",
+        cover: BASE + "a773c634-2ffc-4623-b592-1774dffa8aeb-0d6cae3bdd8b023b8519c19330fc2da7.jpg",
+        photos: [
+          BASE + "e39b457d-3caa-436f-97ea-7a85f96b4e32-414dc38b6499d8c62220055616fc3565.jpg",
+          BASE + "0cf2462b-8afc-41bc-b330-f0f2a7672ae8-8a9c093b1ae6ae070464b95ab4525a91.jpg",
+          BASE + "b4e5e688-3def-4915-89a3-6e96c76beaae-5cba23025775f4e9e8eb60b94748d5cd.jpg",
+          BASE + "7b661e12-56fa-4675-94d3-ba972dcf8f94-abc348ae72f7938748beb391ae46f385.jpg",
+          BASE + "1cd399ad-9d8d-419a-a4a5-abf17bde50f1-6c99267585c22891725ad2ccb7900b12.jpg",
+          BASE + "74774a78-c82a-450b-9c22-34331607c6c6-6498ff5c8aef381328c248240b6b1e2c.jpg",
+          BASE + "3f0a9464-7098-46b9-9659-d2402ac887f6-de362407dd8085b627d0c09ef2b6651a.jpg",
+          BASE + "360309e9-50c9-4489-a120-566ce6e1a08d-bc71ff09570bbadbf0999fd0839efd8d.jpg",
+          BASE + "ebaec386-2a11-4a52-a923-be7674519363-f02b2e512dabbd3a6b880ba5b5beb783.jpg",
+          BASE + "50252533-a361-4e49-9600-c99712e2757c-1da4110b1978edf94fcdc0c4f3f474c0.jpg",
+          BASE + "46b7f6dd-bad1-4e25-8bc9-967e5d2517d6-548a571001a1de767a0d6806710416b5.jpg",
+        ],
+      },
+      {
+        title: "Primeira viagem",
+        cover: BASE + "70bbf773-59ed-47fb-b232-15c2b05e370f-bf1fcd3cecc3d48bddf3b848afc6bebe.jpg",
+        photos: [
+          BASE + "c49cd677-6a8f-4a1b-901e-2c2254b6520d-452e080ed75841a5923f9a447038528e.jpg",
+          BASE + "a57bbf40-536e-46f1-9f40-c0774ecd323b-bb15343f27edd069a6a0f315617dbfb6.jpg",
+          BASE + "693a27f6-7502-4eaf-a283-e545663061bb-93e99da0083153d56674bb00574e2667.jpg",
+          BASE + "41ad439e-4d51-4ffe-8e33-cc149de21658-b419aaeaeb8e3fab42ffa5cfe89c6b71.jpg",
+          BASE + "8578ee7b-acaa-4d81-9d1d-5216c7859f96-3bb3962c4bcc3f402d7ef7c579f8c42d.jpg",
+          BASE + "bb8afc19-97a2-448f-b095-6947563fe43b-e51e365ef84fb9df842cb338962329e3.jpg",
+          BASE + "3af96242-d22d-4a21-95a1-a31ee31e6da3-274582549cd9196ce440e6e6eec61456.jpg",
+          BASE + "1a49e92d-e5be-475a-9c71-fc1d00387782-748e66892c96d4cf787ce1d500fff007.jpg",
+        ],
+      },
+    ];
+
+    // ── Gallery state ─────────────────────────────────────────
+    let galCatIdx = 0;
+    let galPhotoIdx = 0;
+    let switcherOpen = false;
+    let currentPhotoEl = null;
+    let animRafId = null;
+    let timerStart = null;
+    const PHOTO_MS = 4000; // ms per photo
+
+    // ── Photo slide animation ─────────────────────────────────
+    function setPhoto(url, dir) {
+      // dir: 'left' | 'right' | 'up' | 'down' | null
+      const bg = document.getElementById("galleryBg");
+      const img = document.createElement("img");
+      img.className = "photo-slide";
+      img.src = url;
+
+      if (dir && currentPhotoEl) {
+        const inXY = { left: "100%,0", right: "-100%,0", up: "0,100%", down: "0,-100%" }[dir];
+        const outXY = { left: "-100%,0", right: "100%,0", up: "0,-100%", down: "0,100%" }[dir];
+        const [inX, inY] = inXY.split(",");
+        const [outX, outY] = outXY.split(",");
+
+        img.style.transform = `translate(${inX},${inY})`;
+        bg.appendChild(img);
+        img.offsetWidth; // force reflow
+
+        const t = "transform 0.32s cubic-bezier(0.4,0,0.2,1)";
+        currentPhotoEl.style.transition = t;
+        img.style.transition = t;
+        currentPhotoEl.style.transform = `translate(${outX},${outY})`;
+        img.style.transform = "translate(0,0)";
+
+        const old = currentPhotoEl;
+        setTimeout(() => old.remove(), 340);
+      } else {
+        if (currentPhotoEl) currentPhotoEl.remove();
+        bg.appendChild(img);
+      }
+      currentPhotoEl = img;
+    }
+
+    // ── Progress bar timer ────────────────────────────────────
+    function stopTimer() {
+      if (animRafId) {
+        cancelAnimationFrame(animRafId);
+        animRafId = null;
+      }
+    }
+
+    function startTimer() {
+      stopTimer();
+      timerStart = performance.now();
+      function tick(now) {
+        const elapsed = now - timerStart;
+        const pct = Math.min(100, (elapsed / PHOTO_MS) * 100);
+        const fills = document.querySelectorAll(".s-bar-fill");
+        if (fills[galPhotoIdx]) fills[galPhotoIdx].style.width = pct + "%";
+        if (elapsed >= PHOTO_MS) {
+          galNext("left", true);
+        } else {
+          animRafId = requestAnimationFrame(tick);
+        }
+      }
+      animRafId = requestAnimationFrame(tick);
+    }
+
+    // ── Render helpers ────────────────────────────────────────
+    function renderStoryBars() {
+      const cat = GALLERIES[galCatIdx];
+      document.getElementById("storyBarsContainer").innerHTML = cat.photos
+        .map(
+          (_, i) =>
+            `<div class="s-bar"><div class="s-bar-fill" style="width:${i < galPhotoIdx ? 100 : 0}%"></div></div>`,
+        )
+        .join("");
+    }
+
+    function renderUI() {
+      const cat = GALLERIES[galCatIdx];
+      document.getElementById("categoryChipTitle").textContent = cat.title;
+      document.getElementById("categoryChipCount").textContent = cat.photos.length + " fotos";
+      document.getElementById("galPhotoCounter").textContent = galPhotoIdx + 1 + " / " + cat.photos.length;
+      document.getElementById("galCategoryTitle").textContent = cat.title;
+      renderCategorySwitcher();
+    }
+
+    function renderCategorySwitcher() {
+      document.getElementById("categorySwitcher").innerHTML = GALLERIES.map(
+        (cat, i) => `
+      <div class="cat-thumb ${i === galCatIdx ? "active" : ""}" onclick="switchCategory(${i})">
+        <img src="${cat.cover}" loading="lazy">
+        <div class="cat-thumb-label">${cat.title}</div>
+      </div>`,
+      ).join("");
+    }
+
+    // ── Public actions ────────────────────────────────────────
+    function openGallery(catIndex) {
+      galCatIdx = catIndex;
+      galPhotoIdx = 0;
+      switcherOpen = false;
+      currentPhotoEl = null;
+      document.getElementById("galleryView").classList.remove("show-switcher");
+      document.getElementById("galleryBg").innerHTML = "";
+      renderStoryBars();
+      renderUI();
+      setPhoto(GALLERIES[galCatIdx].photos[0], null);
+      document.getElementById("galleryView").classList.add("open");
+      document.body.style.overflow = "hidden";
+      startTimer();
+    }
+
+    function closeGallery() {
+      stopTimer();
+      document.getElementById("galleryView").classList.remove("open", "show-switcher");
+      document.body.style.overflow = "";
+      switcherOpen = false;
+    }
+
+    function galNext(dir = "left", fromTimer = false) {
+      const cat = GALLERIES[galCatIdx];
+      if (galPhotoIdx < cat.photos.length - 1) {
+        galPhotoIdx++;
+        renderStoryBars();
+        renderUI();
+        setPhoto(cat.photos[galPhotoIdx], dir);
+        startTimer();
+      } else if (galCatIdx < GALLERIES.length - 1) {
+        galCatIdx++;
+        galPhotoIdx = 0;
+        renderStoryBars();
+        renderUI();
+        setPhoto(GALLERIES[galCatIdx].photos[0], "up");
+        startTimer();
+      } else {
+        closeGallery();
+      }
+    }
+
+    function galPrev() {
+      stopTimer();
+      if (galPhotoIdx > 0) {
+        galPhotoIdx--;
+      } else if (galCatIdx > 0) {
+        galCatIdx--;
+        galPhotoIdx = GALLERIES[galCatIdx].photos.length - 1;
+      } else {
+        return;
+      }
+      renderStoryBars();
+      renderUI();
+      setPhoto(GALLERIES[galCatIdx].photos[galPhotoIdx], "right");
+      startTimer();
+    }
+
+    function switchCategory(idx) {
+      stopTimer();
+      const dir = idx > galCatIdx ? "up" : "down";
+      galCatIdx = idx;
+      galPhotoIdx = 0;
+      document.getElementById("galleryView").classList.remove("show-switcher");
+      switcherOpen = false;
+      renderStoryBars();
+      renderUI();
+      setPhoto(GALLERIES[galCatIdx].photos[0], dir);
+      startTimer();
+    }
+
+    function toggleSwitcher() {
+      switcherOpen = !switcherOpen;
+      document.getElementById("galleryView").classList.toggle("show-switcher", switcherOpen);
+    }
+
+    // ── Tap zones ─────────────────────────────────────────────
+    document.getElementById("tapLeft").addEventListener("click", () => galPrev());
+    document.getElementById("tapRight").addEventListener("click", () => galNext("left"));
+
+    // ── Touch swipes ──────────────────────────────────────────
+    (function () {
+      const view = document.getElementById("galleryView");
+      let sx = 0,
+        sy = 0,
+        moved = false;
+
+      view.addEventListener(
+        "touchstart",
+        (e) => {
+          sx = e.touches[0].clientX;
+          sy = e.touches[0].clientY;
+          moved = false;
+        },
+        { passive: true },
+      );
+
+      view.addEventListener(
+        "touchmove",
+        (e) => {
+          moved = true;
+        },
+        { passive: true },
+      );
+
+      view.addEventListener(
+        "touchend",
+        (e) => {
+          if (!moved) return;
+          const dx = e.changedTouches[0].clientX - sx;
+          const dy = e.changedTouches[0].clientY - sy;
+          const adx = Math.abs(dx),
+            ady = Math.abs(dy);
+
+          if (ady > adx && ady > 60) {
+            if (dy < 0) {
+              // Swipe UP → next category
+              if (galCatIdx < GALLERIES.length - 1) switchCategory(galCatIdx + 1);
+            } else {
+              // Swipe DOWN → previous category
+              if (galCatIdx > 0) switchCategory(galCatIdx - 1);
+            }
+            return;
+          }
+          if (adx > ady && adx > 50) {
+            dx < 0 ? galNext("left") : galPrev();
+          }
+        },
+        { passive: true },
+      );
+    })();
+
+    // ── Keyboard ──────────────────────────────────────────────
+    document.addEventListener("keydown", (e) => {
+      if (!document.getElementById("galleryView").classList.contains("open")) return;
+      if (e.key === "Escape") closeGallery();
+      if (e.key === "ArrowRight") galNext("left");
+      if (e.key === "ArrowLeft") galPrev();
+      if (e.key === "ArrowUp" && galCatIdx < GALLERIES.length - 1) switchCategory(galCatIdx + 1);
+      if (e.key === "ArrowDown" && galCatIdx > 0) switchCategory(galCatIdx - 1);
+    });
+  </script>
+</body>
+
+</html>

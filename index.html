@@ -1070,13 +1070,8 @@
 
 <body style="background-color: #121212">
   <!-- ════════ GIFT INTRO — ZIPPER REVEAL ════════ -->
-  <!-- Player de áudio -->
-  <audio
-    id="audioPlayer"
-    src="https://cdn.discordapp.com/attachments/752562292763132033/1514370486119694396/Maracuja_Slow_Sense.mp3?ex=6a2b1eeb&is=6a29cd6b&hm=ddfdaace075a2b3759aa771a81cf321070e3dcd5572999527f7bc936f1f968b9&"
-    loop
-    preload="auto"
-  ></audio>
+  <!-- Player de áudio local -->
+  <audio id="audioPlayer" src="data/Maracuja_Slow_Sense.mp3" loop preload="auto"></audio>
 
   <div id="giftIntro">
     <!-- 2 wrap panels — V-shape clip-path applied via JS -->
@@ -1780,7 +1775,7 @@
           animateTo(1, () =>
             setTimeout(() => {
               intro.style.display = "none";
-              // Interação do usuário confirmada — inicia áudio real
+              // Interação confirmada — inicia áudio
               audio.play().catch(() => {});
             }, 80),
           );
@@ -1858,39 +1853,37 @@
 
     function updatePlayerUI() {
       const cur = audio.currentTime || 0;
-      const dur = audio.duration   || 0;
+      const dur = audio.duration || 0;
       const pct = dur ? (cur / dur) * 100 : 0;
-      document.getElementById("progressFill").style.width  = pct + "%";
-      document.getElementById("progressThumb").style.left  = "calc(" + pct + "% - 7.5px)";
-      document.getElementById("currentTime").textContent   = fmt(cur);
-      document.getElementById("totalTime").textContent     = dur ? "-" + fmt(dur - cur) : "-0:00";
+      document.getElementById("progressFill").style.width = pct + "%";
+      document.getElementById("progressThumb").style.left = "calc(" + pct + "% - 7.5px)";
+      document.getElementById("currentTime").textContent = fmt(cur);
+      document.getElementById("totalTime").textContent = dur ? "-" + fmt(dur - cur) : "-0:00";
     }
 
-    audio.addEventListener("timeupdate",     updatePlayerUI);
+    audio.addEventListener("timeupdate", updatePlayerUI);
     audio.addEventListener("loadedmetadata", updatePlayerUI);
-
-    audio.addEventListener("play",  () => {
+    audio.addEventListener("play", () => {
       document.getElementById("pauseIcon").style.display = "";
-      document.getElementById("playIcon").style.display  = "none";
+      document.getElementById("playIcon").style.display = "none";
     });
     audio.addEventListener("pause", () => {
       document.getElementById("pauseIcon").style.display = "none";
-      document.getElementById("playIcon").style.display  = "";
+      document.getElementById("playIcon").style.display = "";
     });
 
     function togglePlay() {
-      audio.paused ? audio.play() : audio.pause();
+      if (audio.paused) audio.play().catch(() => {});
+      else audio.pause();
     }
 
-    // Seek on progress bar click
     document.getElementById("progressBar").addEventListener("click", function (e) {
       if (!audio.duration) return;
       audio.currentTime = ((e.clientX - this.getBoundingClientRect().left) / this.offsetWidth) * audio.duration;
     });
 
-    // Estado inicial — ícone de play (ainda sem interação)
     document.getElementById("pauseIcon").style.display = "none";
-    document.getElementById("playIcon").style.display  = "";
+    document.getElementById("playIcon").style.display = "";
 
     // ── Show/hide message ─────────────────────────────────────
     let msgExpanded = false;
@@ -1919,7 +1912,7 @@
         bg: "wp-bg-blue",
         isIntro: true,
         render: () => `
-        <video id="introVideo" class="intro-video" src="intro.mp4"
+        <video id="introVideo" class="intro-video" src="data/intro.mp4"
           autoplay playsinline muted preload="auto"
           disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
         </video>`,

@@ -1621,9 +1621,9 @@
       </button>
     </div>
 
-    <!-- Tap zones -->
-    <div id="wpTapL" onclick="wpPrev()"></div>
-    <div id="wpTapR" onclick="wpNext()"></div>
+    <!-- Tap zones (navegação via touch handler unificado) -->
+    <div id="wpTapL"></div>
+    <div id="wpTapR"></div>
 
     <!-- Slide content (rendered by JS) -->
     <div id="wpSlide"></div>
@@ -2194,30 +2194,77 @@
     let wpIdx = 0;
     let wpRafId = null;
     let wpTimerStart = null;
+    let wpPaused = false;
+    let wpPauseElapsed = 0;
     const WP_SLIDE_MS = 5000;
 
+    function wpTimerTick(now) {
+      const pct = Math.min(100, ((now - wpTimerStart) / WP_SLIDE_MS) * 100);
+      const fills = document.querySelectorAll(".wp-bar-fill");
+      if (fills[wpIdx]) fills[wpIdx].style.width = pct + "%";
+      if (pct >= 100) wpNext();
+      else wpRafId = requestAnimationFrame(wpTimerTick);
+    }
+
     function wpStopTimer() {
-      if (wpRafId) {
-        cancelAnimationFrame(wpRafId);
-        wpRafId = null;
-      }
+      if (wpRafId) { cancelAnimationFrame(wpRafId); wpRafId = null; }
     }
 
     function wpStartTimer() {
       wpStopTimer();
+      wpPaused = false;
+      wpPauseElapsed = 0;
       wpTimerStart = performance.now();
-      function tick(now) {
-        const pct = Math.min(100, ((now - wpTimerStart) / WP_SLIDE_MS) * 100);
-        const fills = document.querySelectorAll(".wp-bar-fill");
-        if (fills[wpIdx]) fills[wpIdx].style.width = pct + "%";
-        if (pct >= 100) {
-          wpNext();
-        } else {
-          wpRafId = requestAnimationFrame(tick);
+      wpRafId = requestAnimationFrame(wpTimerTick);
+    }
+
+    function wpPause() {
+      if (wpPaused || !wpTimerStart || WP_SLIDES[wpIdx]?.isTimeline) return;
+      wpPaused = true;
+      wpPauseElapsed = Math.min(WP_SLIDE_MS - 50, performance.now() - wpTimerStart);
+      wpStopTimer();
+    }
+
+    function wpResume() {
+      if (!wpPaused) return;
+      wpPaused = false;
+      wpTimerStart = performance.now() - wpPauseElapsed;
+      wpRafId = requestAnimationFrame(wpTimerTick);
+    }
+
+    // ── Hold-to-pause + tap-to-navigate ──────────────────────
+    (function () {
+      const ov = document.getElementById("wrappedOverlay");
+      let pressStart = 0;
+      const TAP_MS = 200; // menos que isso = tap, mais = hold
+
+      function onPress() {
+        pressStart = performance.now();
+        wpPause();
+      }
+
+      function onRelease(clientX) {
+        const held = performance.now() - pressStart;
+        wpResume();
+        // Tap curto → navega (só se não for slide de timeline)
+        if (held < TAP_MS && !WP_SLIDES[wpIdx]?.isTimeline) {
+          if (clientX < window.innerWidth / 2) wpPrev();
+          else wpNext();
         }
       }
-      wpRafId = requestAnimationFrame(tick);
-    }
+
+      // Touch
+      ov.addEventListener("touchstart", (e) => onPress(), { passive: true });
+      ov.addEventListener("touchend",   (e) => onRelease(e.changedTouches[0].clientX), { passive: true });
+      ov.addEventListener("touchcancel",() => wpResume(), { passive: true });
+
+      // Mouse (desktop)
+      ov.addEventListener("mousedown", (e) => onPress());
+      window.addEventListener("mouseup", (e) => {
+        if (!document.getElementById("wrappedOverlay").classList.contains("open")) return;
+        onRelease(e.clientX);
+      });
+    })();
 
     function renderWpBars() {
       const c = document.getElementById("wpBars");

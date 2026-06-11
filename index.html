@@ -134,7 +134,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
     }
 
     /* Tap zones (left / right to change photo) */
@@ -1131,6 +1131,7 @@
 
     /* ── Termo game ─────────────────────────────────────────── */
     .wp-bg-game { background: #0f0f0f; }
+    .wp-bg-roulette { background: radial-gradient(ellipse 130% 80% at 50% 15%, #1c0b42 0%, #090415 55%, #000 100%); }
 
     #wpSlide.is-game {
       overflow-y: auto;
@@ -1138,17 +1139,17 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
     }
 
-    .tg-grid { display: flex; flex-direction: column; gap: 5px; width: 100%; max-width: 360px; margin: 0 auto; }
-    .tg-row  { display: flex; gap: 5px; justify-content: center; }
+    .tg-grid { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+    .tg-row  { display: flex; gap: 4px; justify-content: stretch; }
 
     .tg-cell {
-      flex: 1; max-width: 42px; aspect-ratio: 1;
+      flex: 1; aspect-ratio: 1;
       border: 2px solid #3a3a3c; border-radius: 4px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 900; color: #fff;
+      font-size: 18px; font-weight: 900; color: #fff;
       background: transparent; text-transform: uppercase;
       font-family: "Manrope", sans-serif;
     }
@@ -1157,7 +1158,7 @@
     .tg-cell.present { background: #b59f3b; border-color: #b59f3b; }
     .tg-cell.absent  { background: #3a3a3c; border-color: #3a3a3c; }
 
-    .tg-keyboard { width: 100%; padding: 8px 4px; display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+    .tg-keyboard { width: 100%; padding: 8px 4px; display: flex; flex-direction: column; gap: 6px; }
     .tg-kb-row   { display: flex; gap: 5px; justify-content: center; }
 
     .tg-key {
@@ -1407,6 +1408,42 @@
       opacity: 0;
       animation: wpFadeUp 0.5s 0.4s forwards;
     }
+
+    /* ── Timeline photo lightbox ─────────────────────────────────── */
+    #tlLightbox {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      background: rgba(0,0,0,0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #tlLightbox.open { display: flex; }
+    #tlLightbox img {
+      max-width: 92%;
+      max-height: 88%;
+      border-radius: 10px;
+      object-fit: contain;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+    #tlLightboxClose {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tl-photo { cursor: pointer; }
   </style>
   <script>
     tailwind.config = {
@@ -1927,12 +1964,12 @@
                           <div
                             class="relative photo-grid-item w-full overflow-hidden rounded-lg cursor-pointer category-mini-card"
                             onclick="openGallery(2)">
-                            <img id="f-gal3" alt="Primeira viagem" class="object-cover bg-neutral-700 w-full h-full" src="" />
+                            <img id="f-gal3" alt="Nossas aventuras" class="object-cover bg-neutral-700 w-full h-full" src="" />
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
                             </div>
                             <div class="absolute bottom-2 left-2">
-                              <span class="text-sm font-bold text-white drop-shadow-md whitespace-pre-wrap">Primeira
-                                viagem</span>
+                              <span class="text-sm font-bold text-white drop-shadow-md whitespace-pre-wrap">Nossas
+                                aventuras</span>
                             </div>
                           </div>
                         </div>
@@ -2054,6 +2091,13 @@
 
     <!-- Slide content (rendered by JS) -->
     <div id="wpSlide"></div>
+
+    <!-- Timeline photo lightbox -->
+    <div id="tlLightbox">
+      <button id="tlLightboxClose" onclick="tlCloseLightbox()">✕</button>
+      <img id="tlLightboxImg" src="" alt="" onclick="tlCloseLightbox()">
+      <video id="tlLightboxVid" playsinline muted loop style="display:none;max-width:92%;max-height:88%;border-radius:10px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,0.6)" onclick="this.paused?this.play():this.pause()"></video>
+    </div>
   </div>
 
   <!-- ═══════════════════ FULL-SCREEN GALLERY (Stories style) ═══════════════════ -->
@@ -2341,92 +2385,86 @@
     // ║  Basta substituir o filename (texto após a última /) de cada ║
     // ║  linha. A URL base é sempre a mesma para todos.              ║
     // ╚═══════════════════════════════════════════════════════════════╝
-    const MEDIA_BASE = "https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/";
-
     const FOTOS = {
       // ── Carrossel de fotos — 5 slides na página principal ─────────
       swiper: [
-        "68945161-00ba-409e-882c-fd1183a2ef18-ca5c62f381445f44d91cfd9ad2311e50.jpg", // slide 1
-        "a2e7c4e9-42d3-4979-ae74-6ce2e01155c3-q5qnrgxrhgoeonqye21m.jpeg",             // slide 2
-        "cd17eea7-d91e-48e2-a7de-acc7a50c8f7e-3896db5ab0787ea2b35bc9986b516adb.jpg",  // slide 3
-        "2fba59d3-eb4c-4bcb-aed1-3467f6053dcf-8e62abaee04424cd1b986d6fbed07001.jpg",  // slide 4
-        "4212a0c9-ad62-445e-9e0a-c32468c01c82-eve-o-malley.jpg",                       // slide 5
+        "data/fotos/swiper/sw1.jpg",
+        "data/fotos/swiper/sw2.jpg",
+        "data/fotos/swiper/sw3.jpg",
+        "data/fotos/swiper/sw4.jpg",
+        "data/fotos/swiper/sw5.jpg",
       ],
 
       // ── Fundo do card "Sobre o casal" ─────────────────────────────
-      hero: "c811abc1-33fd-4d03-8ec9-d44822223db6-f57a3077c9acfa82f8dece0492e7ba9c.jpg",
+      hero: "data/fotos/hero1.jpg",
 
       // ── Timeline do Wrapped — 8 fotos em ordem cronológica ────────
       //    Cada item corresponde a um evento da timeline (mesma ordem)
       timeline: [
-        "33b1b0cd-683b-45db-938c-3611beaebd8c-f9c75465a503091897c70da1dcc2da75.jpg",  // 1 · Setembro 2023 – No aniversário da Mariana
-        "dd0fbdb4-2147-49c8-b989-d74b91460054-sem-titulo.jpg",                          // 2 · Outubro 2023  – Melhor decisão da minha vida
-        "b3584887-9f95-431a-b819-3bf2c5876652-40d5226377679f32711f9000ed00d04f.jpg",   // 3 · Outubro 2023  – Nosso lugar preferido
-        "fd7dd361-8cae-4798-b455-0f7bda7ccaa0-88c6133b3126db35ed4fb73635ff2988.jpg",   // 4 · Novembro 2023 – Nunca fiquei tão nervoso
-        "6ee91254-c19b-4970-a251-f2ea3abeeab4-9d0074b7abcdbf676277bd17cb3b17cb.jpg",   // 5 · Novembro 2023 – Ainda estou
-        "ef5fa066-0bd6-4fbf-8a16-6639fbfc289d-5d75a080a39de2ec6afeb1d692b38c82.jpg",   // 6 · Dezembro 2023 – São minha família agora
-        "5b3d56f8-4894-4155-a1b9-905f0ddb04c8-bb15343f27edd069a6a0f315617dbfb6.jpg",   // 7 · Janeiro 2024  – Caldas Novas
-        "df5bd547-4d15-4b62-94c3-7fa9954edd72-5a86ecd5bbc802c835b61ae6361f16cf.jpg",   // 8 · Novembro 2023 – Pedido de namoro
+        "data/fotos/unicos/mu1.jpg",  
+        "data/fotos/unicos/mu2.jpg",
+        "data/fotos/unicos/mu3.jpg",
+        "data/fotos/unicos/mu4.png",
+        "data/fotos/unicos/mu5.jpg",
+        "data/fotos/unicos/mu6.png",
+        "data/fotos/unicos/mu7.jpg",
+        "data/fotos/unicos/mu8.jpg",
       ],
 
       // ── Galerias — capas e fotos de cada álbum ────────────────────
-      //    Para adicionar fotos: insira o filename no array "fotos"
+      //    Para adicionar fotos: insira a URL completa no array "fotos"
       //    Para trocar a capa: altere o campo "capa"
       albumDates: {
-        capa: "fff6fadf-2b29-473d-976d-af034cb6be08-994b8582db6b8017a67d61d96f1c3dd7.jpg",
+        capa: "data/fotos/dates/d1.jpg",
         fotos: [
-          "2f0d11c9-2f1e-4131-bbc5-402c8c0b3481-3bc1fbda2a9ac431bef7d8cfa73d4a1e.jpg.png",
-          "b52c203a-e771-4d85-8cce-c846f1c270c6-8cb6f7dca9ccc8f03f652b56596ee53d.jpg.png",
-          "5e95d41b-9613-4838-9b72-ab2439a199fa-034b62012f69ccf0a15f1579ecdfd3ca.jpg.png",
-          "91de1f6b-f59d-4476-9b5b-83fb1d033f69-6d97864849aa6d73b9849325406758ed.0000000.jpg.png",
-          "fd306194-e052-4be5-adfc-21bfc01b5163-76aca3e40aa7f4138729bff29294ba5b.jpg.png",
-          "7495ceaa-8e31-459e-95a6-c1354253207e-018abdd9480269f0e0bfc52e7449d5b4.jpg.png",
-          "46096314-69c5-4e59-8ceb-343d5428ed7a-ee4e9475e7b0d09e1dd99bae6f4c468c.jpg.png",
-          "61dc9e23-1cd3-4b83-8982-0de06a1129c0-48fe4cfaa7947679b49c0e0af5b708e6.jpg.png",
-          "dea73bbd-4d1b-48bd-aef9-eb2455c51577-45ea62fbd1855a0f672bb8c4f2e0b168.jpg.png",
+        "data/fotos/dates/d1.jpg",
+        "data/fotos/dates/d2.jpg",
+        "data/fotos/dates/d3.jpg",
+        "data/fotos/dates/d4.jpg",
+        "data/fotos/dates/d5.jpg",     
+        "data/fotos/dates/d6.jpg",
+        "data/fotos/dates/d7.jpg",
+        "data/fotos/dates/d8.jpg",
         ],
       },
       albumAleatorias: {
-        capa: "a773c634-2ffc-4623-b592-1774dffa8aeb-0d6cae3bdd8b023b8519c19330fc2da7.jpg",
+        capa: "data/fotos/aleatorias/a9.jpg",
         fotos: [
-          "e39b457d-3caa-436f-97ea-7a85f96b4e32-414dc38b6499d8c62220055616fc3565.jpg",
-          "0cf2462b-8afc-41bc-b330-f0f2a7672ae8-8a9c093b1ae6ae070464b95ab4525a91.jpg",
-          "b4e5e688-3def-4915-89a3-6e96c76beaae-5cba23025775f4e9e8eb60b94748d5cd.jpg",
-          "7b661e12-56fa-4675-94d3-ba972dcf8f94-abc348ae72f7938748beb391ae46f385.jpg",
-          "1cd399ad-9d8d-419a-a4a5-abf17bde50f1-6c99267585c22891725ad2ccb7900b12.jpg",
-          "74774a78-c82a-450b-9c22-34331607c6c6-6498ff5c8aef381328c248240b6b1e2c.jpg",
-          "3f0a9464-7098-46b9-9659-d2402ac887f6-de362407dd8085b627d0c09ef2b6651a.jpg",
-          "360309e9-50c9-4489-a120-566ce6e1a08d-bc71ff09570bbadbf0999fd0839efd8d.jpg",
-          "ebaec386-2a11-4a52-a923-be7674519363-f02b2e512dabbd3a6b880ba5b5beb783.jpg",
-          "50252533-a361-4e49-9600-c99712e2757c-1da4110b1978edf94fcdc0c4f3f474c0.jpg",
-          "46b7f6dd-bad1-4e25-8bc9-967e5d2517d6-548a571001a1de767a0d6806710416b5.jpg",
+          "data/fotos/aleatorias/a1.jpg",
+          "data/fotos/aleatorias/a2.jpeg",
+          "data/fotos/aleatorias/a3.jpg",
+          "data/fotos/aleatorias/a4.jpg",
+          "data/fotos/aleatorias/a5.jpg",
+          "data/fotos/aleatorias/a6.jpg",
+          "data/fotos/aleatorias/a7.jpg",
+          "data/fotos/aleatorias/a8.jpg",
         ],
       },
       albumViagem: {
-        capa: "70bbf773-59ed-47fb-b232-15c2b05e370f-bf1fcd3cecc3d48bddf3b848afc6bebe.jpg",
+        capa: "data/fotos/aventuras/av1.jpg",
         fotos: [
-          "c49cd677-6a8f-4a1b-901e-2c2254b6520d-452e080ed75841a5923f9a447038528e.jpg",
-          "a57bbf40-536e-46f1-9f40-c0774ecd323b-bb15343f27edd069a6a0f315617dbfb6.jpg",
-          "693a27f6-7502-4eaf-a283-e545663061bb-93e99da0083153d56674bb00574e2667.jpg",
-          "41ad439e-4d51-4ffe-8e33-cc149de21658-b419aaeaeb8e3fab42ffa5cfe89c6b71.jpg",
-          "8578ee7b-acaa-4d81-9d1d-5216c7859f96-3bb3962c4bcc3f402d7ef7c579f8c42d.jpg",
-          "bb8afc19-97a2-448f-b095-6947563fe43b-e51e365ef84fb9df842cb338962329e3.jpg",
-          "3af96242-d22d-4a21-95a1-a31ee31e6da3-274582549cd9196ce440e6e6eec61456.jpg",
-          "1a49e92d-e5be-475a-9c71-fc1d00387782-748e66892c96d4cf787ce1d500fff007.jpg",
-        ],
+          "data/fotos/aventuras/av1.jpg",
+          "data/fotos/aventuras/av2.jpg",
+          "data/fotos/aventuras/av3.jpg",
+          "data/fotos/aventuras/av4.jpg",
+          "data/fotos/aventuras/av5.jpg",
+          "data/fotos/aventuras/av6.jpg",
+          "data/fotos/aventuras/av7.jpg",
+          "data/fotos/aventuras/av8.jpg",
+      ],
       },
     };
 
     // Aplica fotos da config às imagens da página principal
     FOTOS.swiper.forEach((f, i) => {
       const el = document.getElementById("f-sw" + (i + 1));
-      if (el) el.src = MEDIA_BASE + f;
+      if (el) el.src = f;
     });
     const _hero = document.getElementById("f-hero");
-    if (_hero) _hero.src = MEDIA_BASE + FOTOS.hero;
+    if (_hero) _hero.src = FOTOS.hero;
     [["f-gal1", FOTOS.albumDates.capa], ["f-gal2", FOTOS.albumAleatorias.capa], ["f-gal3", FOTOS.albumViagem.capa]].forEach(([id, f]) => {
       const el = document.getElementById(id);
-      if (el) el.src = MEDIA_BASE + f;
+      if (el) el.src = f;
     });
 
     const HOURS_TOTAL = Math.floor((new Date() - new Date("2023-11-11T00:00:00")) / 3600000);
@@ -2683,14 +2721,14 @@
             return `<div style="position:absolute;left:${x}%;top:${y}px;width:${sz}px;height:${sz}px;border-radius:50%;background:#fff;opacity:${op}"></div>`;
           }).join("");
           const events = [
-            { date: "Setembro 2023", caption: "No aniversário da Mariana",   desc: "Nossas almas se encontraram pela primeira vez", side: "left"  },
-            { date: "Outubro 2023",  caption: "Melhor decisão da minha vida", desc: "Enviei a primeira mensagem",                    side: "right" },
-            { date: "Outubro 2023",  caption: "Nosso lugar preferido",        desc: "Primeiro encontro",                            side: "left"  },
-            { date: "Novembro 2023", caption: "Nunca fiquei tão nervoso",     desc: "Nosso primeiro beijo",                         side: "right" },
-            { date: "Novembro 2023", caption: "Ainda estou",                  desc: "Eu já estava perdidamente apaixonado",         side: "left"  },
-            { date: "Dezembro 2023", caption: "São minha família agora",      desc: "Conheci sua família pela primeira vez",        side: "right" },
-            { date: "Janeiro 2024",  caption: "Caldas Novas",                 desc: "Primeira viagem juntos",                       side: "left"  },
-            { date: "Novembro 2023", caption: "A oficialização de algo único", desc: "Pedido de namoro",                            side: "right" },
+            { date: "4 de Novembro 2023", caption: "Era só uma duvida sobre a praia kkk",   desc: "Enviei a primeira mensagem", side: "left"  },
+            { date: "Novembro 2023",  caption: "O chuvisco que virou chuva de amor", desc: "Nosso primeiro encontro",                    side: "right" },
+            { date: "Janeiro 2024",  caption: "Comemoramos mais um aninho seu",        desc: "Seu primeiro aniversário juntos",                            side: "left"  },
+            { date: "Fevereiro 2024", caption: "Que momento incrível ao seu lado",     desc: "Nosso primeiro nascer do sol juntos",                         side: "right" },
+            { date: "Março 2024", caption: "Lugares inesqueciveis",                  desc: "Nossa primeira pequena viagem juntos",         side: "left"  },
+            { date: "Maio 2024", caption: "Que perrengue foi essa viagem",      desc: "Conheci sua família pela primeira vez",        side: "right" },
+            { date: "Novembro 2024",  caption: "Um dia inesquecivel nessa cabana",                 desc: "Nosso primeiro aninho juntos",                       side: "left"  },
+            { date: "Janeiro 2025", caption: "Conhecemos quase tudo kkkk", desc: "Conhecendo pela primeira vez Bombinhas",                            side: "right" },
           ];
           const heart = `<svg width="18" height="18" viewBox="0 0 24 24" fill="#F472B6" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
           const eventsHtml = events
@@ -2699,7 +2737,7 @@
           <div class="tl-event ${e.side}" style="animation-delay:${0.1 + i * 0.08}s">
             <div class="tl-polaroid">
               <div class="tl-polaroid-inner">
-                <img class="tl-photo" src="${MEDIA_BASE}${FOTOS.timeline[i]}" alt="${e.caption}" loading="lazy">
+                <img class="tl-photo" src="${FOTOS.timeline[i]}" alt="${e.caption}" loading="lazy" onclick="tlOpenLightbox('${i === 0 ? 'data/fotos/pmensagem.mp4' : FOTOS.timeline[i]}')" >
                 <p class="tl-caption">${e.caption}</p>
               </div>
             </div>
@@ -2764,18 +2802,20 @@
           const row2 = "ASDFGHJKL".split("").map(k  => `<button class="tg-key" data-k="${k}" onclick="tgInput('${k}')">${k}</button>`).join("");
           const row3 = "ZXCVBNM".split("").map(k    => `<button class="tg-key" data-k="${k}" onclick="tgInput('${k}')">${k}</button>`).join("");
           return `
-          <div style="flex:1;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 12px 8px">
-            <p style="font-size:clamp(36px,12vw,52px);font-weight:900;color:#fff;margin-bottom:8px;text-align:center;font-family:'Manrope',sans-serif;line-height:1.15">O que eu mais<br>gosto em<br>você</p>
-            <p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:18px;text-align:center">Descubra a palavra secreta (${W} letras)</p>
-            <div class="tg-grid">${grid}</div>
-            <div id="tgResult" style="display:none;flex-direction:column;align-items:center;padding:12px 0 4px"></div>
+          <div style="width:100%;padding:92px 16px 6px;text-align:center">
+            <p style="font-size:clamp(20px,5.4vw,28px);font-weight:900;color:#fff;margin-bottom:5px;font-family:'Manrope',sans-serif;line-height:1.2">O que eu mais gosto em você</p>
+            <p style="font-size:12px;color:rgba(255,255,255,0.4);margin:0">Descubra a palavra secreta (${W} letras)</p>
           </div>
-          <div class="tg-keyboard" style="max-width:380px;width:100%">
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;width:100%;padding:6px 3px">
+            <div class="tg-grid">${grid}</div>
+          </div>
+          <div class="tg-keyboard" id="tgKeyboard" style="max-width:380px;width:100%;margin-top:0">
             <div class="tg-kb-row">${row1}</div>
             <div class="tg-kb-row">${row2}</div>
             <div class="tg-kb-row">${row3}<button class="tg-key tg-key-wide" data-k="DEL" onclick="tgInput('DEL')">⌫</button></div>
             <div class="tg-kb-row"><button class="tg-key tg-key-enter" onclick="tgInput('ENTER')">ENTER</button></div>
-          </div>`;
+          </div>
+          <div id="tgResult" style="display:none;width:100%"></div>`;
         },
         onEnter: () => {
           document.getElementById("wpSlide").classList.add("is-game");
@@ -2796,7 +2836,7 @@
         <div class="wp-kicker">vocês guardaram</div>
         <div class="wp-number">1.079</div>
         <div class="wp-unit">fotos juntos</div>
-        <div class="wp-pill">em 3 álbuns especiais 📸</div>`,
+        <div class="wp-pill">Recordando momentos incríveis 📸</div>`,
       },
       {
         bg: "wp-bg-rose",
@@ -2806,6 +2846,29 @@
           "E pensar que tudo começou com uma simples coincidencia, uma inscrição em curso, uma solicitação via instagram..."
         </div>
         <div class="wp-subtitle" style="margin-top:16px">Tiago para Keisy</div>`,
+      },
+      {
+        bg: "wp-bg-roulette",
+        isGame: true,
+        render: () => `
+        <div style="flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:88px 16px 20px">
+          <p style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:6px;text-align:center;letter-spacing:0.12em;text-transform:uppercase;font-family:'Manrope',sans-serif">O que será que a sorte reserva?</p>
+          <p style="font-size:22px;font-weight:900;color:#fff;margin-bottom:24px;text-align:center;font-family:'Manrope',sans-serif;line-height:1.2">Para onde vamos<br>sair hoje?</p>
+          <div style="position:relative;width:280px;height:280px;flex-shrink:0">
+            <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:22px solid #fff;z-index:2;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.7))"></div>
+            <canvas id="rwCanvas" width="280" height="280" style="border-radius:50%;box-shadow:0 0 40px rgba(236,64,122,0.3),0 0 0 3px rgba(255,255,255,0.12)"></canvas>
+          </div>
+          <button id="rwBtn" onclick="rwSpin()" style="margin-top:26px;padding:14px 44px;border-radius:50px;background:linear-gradient(135deg,#ec4899,#a78bfa);color:#fff;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:'Manrope',sans-serif;box-shadow:0 4px 20px rgba(236,64,122,0.35)">Girar! 🎰</button>
+          <div id="rwResult" style="display:none;flex-direction:column;align-items:center;margin-top:22px;text-align:center">
+            <p style="font-size:34px;font-weight:900;color:#fff;margin-bottom:4px;font-family:'Manrope',sans-serif">🎉 Japa!</p>
+            <p style="font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:22px;font-family:'Manrope',sans-serif">A sorte falou! 🍜</p>
+            <button onclick="wpNext()" style="padding:14px 36px;border-radius:50px;background:#4ade80;color:#0a1a0a;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:'Manrope',sans-serif">Próxima Seção →</button>
+          </div>
+        </div>`,
+        onEnter: () => {
+          document.getElementById("wpSlide").classList.add("is-game");
+          setTimeout(() => rwDraw(), 50);
+        },
       },
       {
         bg: "wp-bg-blue",
@@ -3010,13 +3073,21 @@
 
     function tgShowResult(won) {
       const el = document.getElementById("tgResult");
+      const kb = document.getElementById("tgKeyboard");
       if (!el) return;
-      el.style.display = "flex";
-      el.innerHTML = won
-        ? `<p style="color:#538d4e;font-size:17px;font-weight:800;margin-bottom:12px;text-align:center">🎉 Parabéns! Você acertou!</p>`
-        : `<p style="color:rgba(255,255,255,0.85);font-size:14px;font-weight:600;margin-bottom:6px;text-align:center">Não foi dessa vez... A palavra era</p>
-           <p style="color:#fff;font-size:22px;font-weight:900;letter-spacing:0.12em;margin-bottom:12px">${TG_WORD}</p>`;
-      el.innerHTML += `<button onclick="wpNext()" style="padding:12px 32px;border-radius:24px;background:#fff;color:#111;font-weight:700;font-size:14px;border:none;cursor:pointer">Próxima Seção →</button>`;
+      if (kb) kb.style.display = "none";
+      const tiles = TG_WORD.split("").map(l =>
+        `<div style="width:36px;height:36px;background:#538d4e;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff;font-family:'Manrope',sans-serif">${l}</div>`
+      ).join("");
+      el.style.display = "block";
+      el.innerHTML = `
+      <div style="background:rgba(18,45,18,0.97);border-radius:20px;padding:22px 16px 20px;margin:0 8px 12px;text-align:center;border:1px solid rgba(83,141,78,0.35)">
+        <p style="font-size:22px;font-weight:900;color:#fff;margin-bottom:3px;font-family:'Manrope',sans-serif">${won ? "Parabéns! 🎉" : "Não foi dessa vez..."}</p>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:14px">A palavra era</p>
+        <div style="display:flex;gap:6px;justify-content:center;margin-bottom:18px">${tiles}</div>
+        <p style="font-size:19px;color:rgba(255,255,255,0.9);font-family:'Caveat',cursive;font-weight:600;margin-bottom:22px">"Te amo, sua chata!"</p>
+        <button onclick="wpNext()" style="width:100%;padding:15px;border-radius:50px;background:#4ade80;color:#0a1a0a;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:'Manrope',sans-serif;letter-spacing:0.01em">Próxima Seção →</button>
+      </div>`;
     }
 
     function tgStart() {
@@ -3033,6 +3104,106 @@
 
     function tgDestroy() {
       if (tgKeyHandler) { document.removeEventListener("keydown", tgKeyHandler); tgKeyHandler = null; }
+    }
+
+    function tlOpenLightbox(src) {
+      const lb  = document.getElementById("tlLightbox");
+      const img = document.getElementById("tlLightboxImg");
+      const vid = document.getElementById("tlLightboxVid");
+      if (!lb) return;
+      const isVideo = src.endsWith(".mp4") || src.endsWith(".webm") || src.endsWith(".mov");
+      if (isVideo) {
+        img.style.display = "none";
+        vid.style.display = "block";
+        vid.src = src;
+        vid.play();
+      } else {
+        vid.style.display = "none";
+        vid.pause(); vid.src = "";
+        img.style.display = "block";
+        img.src = src;
+      }
+      lb.classList.add("open");
+    }
+    function tlCloseLightbox() {
+      const lb  = document.getElementById("tlLightbox");
+      const vid = document.getElementById("tlLightboxVid");
+      if (!lb) return;
+      lb.classList.remove("open");
+      vid.pause(); vid.src = "";
+    }
+
+    // ── Roleta de prêmio ─────────────────────────────────────────────
+    const RW_SEGMENTS = [
+      { label: "Madero",     color: "#EC407A" },
+      { label: "Outback",    color: "#42A5F5" },
+      { label: "Steakhouse", color: "#EC407A" },
+      { label: "Pizzaria",   color: "#42A5F5" },
+      { label: "Japa",       color: "#EC407A" },
+      { label: "Sorveteria", color: "#42A5F5" },
+    ];
+    let rwSpinning = false, rwTotalRotation = 0;
+
+    function rwDraw(allJapa = false) {
+      const canvas = document.getElementById("rwCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const cx = canvas.width / 2, cy = canvas.height / 2, r = cx - 4;
+      const n = RW_SEGMENTS.length;
+      const seg = (2 * Math.PI) / n;
+      const offset = -Math.PI / 2 - seg / 2;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      RW_SEGMENTS.forEach((s, i) => {
+        const a0 = offset + i * seg, a1 = a0 + seg;
+        const color = allJapa ? "#EC407A" : s.color;
+        const label = allJapa ? "Japa 🍜" : s.label;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, a0, a1); ctx.closePath();
+        ctx.fillStyle = color; ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 2; ctx.stroke();
+        ctx.save();
+        ctx.translate(cx, cy); ctx.rotate(a0 + seg / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#fff"; ctx.font = "bold 14px Manrope,sans-serif";
+        ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 4;
+        ctx.fillText(label, r - 14, 5);
+        ctx.restore();
+      });
+      ctx.beginPath(); ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
+      ctx.fillStyle = "#0a0514"; ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 2.5; ctx.stroke();
+    }
+
+    function rwSpin() {
+      if (rwSpinning) return;
+      rwSpinning = true;
+      const btn = document.getElementById("rwBtn");
+      if (btn) { btn.disabled = true; btn.style.opacity = "0.5"; }
+      rwTotalRotation += 6 * 360 + 15;
+      const canvas = document.getElementById("rwCanvas");
+      if (!canvas) return;
+      canvas.style.transition = "transform 4.5s cubic-bezier(0.17,0.67,0.12,0.99)";
+      canvas.style.transform = `rotate(${rwTotalRotation}deg)`;
+      setTimeout(() => {
+        rwSpinning = false;
+        // Flash: fade out → redesenha tudo como Japa → fade in → mostra resultado
+        canvas.style.transition = "opacity 0.18s";
+        canvas.style.opacity = "0";
+        setTimeout(() => {
+          rwDraw(true);
+          canvas.style.opacity = "1";
+          setTimeout(() => {
+            const res = document.getElementById("rwResult");
+            if (res) res.style.display = "flex";
+            if (btn) btn.style.display = "none";
+          }, 220);
+        }, 200);
+      }, 4700);
+    }
+
+    function rwDestroy() {
+      rwSpinning = false; rwTotalRotation = 0;
+      const c = document.getElementById("rwCanvas");
+      if (c) { c.style.transition = "none"; c.style.transform = ""; }
     }
 
     let starInterval = null;
@@ -3135,6 +3306,7 @@
       stopIntroParticles();
       stopMeteors();
       tgDestroy();
+      rwDestroy();
       const slide = WP_SLIDES[wpIdx];
       const el = document.getElementById("wpSlide");
       el.className = ""; // reset (removes is-timeline, is-intro, is-park etc.)
@@ -3233,18 +3405,18 @@
     const GALLERIES = [
       {
         title: "Nossos Dates",
-        cover: MEDIA_BASE + FOTOS.albumDates.capa,
-        photos: FOTOS.albumDates.fotos.map(f => MEDIA_BASE + f),
+        cover: FOTOS.albumDates.capa,
+        photos: FOTOS.albumDates.fotos,
       },
       {
         title: "Fotos aleatórias",
-        cover: MEDIA_BASE + FOTOS.albumAleatorias.capa,
-        photos: FOTOS.albumAleatorias.fotos.map(f => MEDIA_BASE + f),
+        cover: FOTOS.albumAleatorias.capa,
+        photos: FOTOS.albumAleatorias.fotos,
       },
       {
-        title: "Primeira viagem",
-        cover: MEDIA_BASE + FOTOS.albumViagem.capa,
-        photos: FOTOS.albumViagem.fotos.map(f => MEDIA_BASE + f),
+        title: "Nossas aventuras",
+        cover: FOTOS.albumViagem.capa,
+        photos: FOTOS.albumViagem.fotos,
       },
     ];
 

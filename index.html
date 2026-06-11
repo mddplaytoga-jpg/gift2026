@@ -423,14 +423,14 @@
     /* Bow */
     .g-bow {
       position: absolute;
-      top: calc(33% - 80px);
+      top: calc(33% - 90px);
       left: 50%;
       transform: translateX(-50%);
-      width: 170px;
-      height: 150px;
+      width: 300px;
+      height: 190px;
       z-index: 9;
-      animation: bowPulse 2.4s ease-in-out infinite;
-      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45));
+      animation: bowPulse 2.6s ease-in-out infinite;
+      filter: drop-shadow(0 8px 22px rgba(10, 80, 120, 0.65));
     }
 
     @keyframes bowPulse {
@@ -441,7 +441,7 @@
       }
 
       50% {
-        transform: translateX(-50%) scale(1.06);
+        transform: translateX(-50%) scale(1.05);
       }
     }
 
@@ -466,17 +466,18 @@
     }
 
     .g-badge {
-      background: rgba(212, 175, 55, 0.14);
-      border: 1px solid rgba(212, 175, 55, 0.35);
+      background: rgba(212, 175, 55, 0.28);
+      border: 1px solid rgba(212, 175, 55, 0.65);
       border-radius: 50px;
-      padding: 6px 18px;
-      color: #fde68a;
+      padding: 6px 20px;
+      color: #ffe566;
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       opacity: 0;
       animation: gFadeUp 0.6s 0.3s forwards;
+      text-shadow: 0 0 12px rgba(255, 220, 60, 0.6);
     }
 
     .g-title {
@@ -501,8 +502,8 @@
     /* Hint arrows */
     .g-hint {
       position: absolute;
-      z-index: 9;
-      bottom: 44px;
+      z-index: 12;
+      top: 58px;
       left: 0;
       right: 0;
       display: flex;
@@ -514,9 +515,11 @@
     }
 
     .g-hint-text {
-      color: rgba(255, 255, 255, 0.55);
-      font-size: 13px;
-      font-weight: 500;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 14px;
+      font-weight: 600;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+      letter-spacing: 0.02em;
     }
 
     .g-arrows {
@@ -850,6 +853,32 @@
       height: 100%;
       object-fit: cover;
       pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Dark gradient overlay so text is legible over the video */
+    .wp-intro-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.55) 0%,
+        rgba(0, 0, 0, 0.25) 45%,
+        rgba(0, 0, 0, 0.50) 100%
+      );
+    }
+
+    /* Title text container over the video */
+    .wp-intro-title {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 28px;
     }
 
     /* Hours slide: background transitions from video's final red to dark */
@@ -876,6 +905,333 @@
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
+    }
+
+    /* ── Park scene slide ── */
+    #wpSlide.is-park {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .wp-bg-park {
+      background: #4FC3E8;
+    }
+
+    .wp-park-scene {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .wp-park-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Sunny text overlay — positioned in sky area */
+    .wp-park-sunny {
+      position: absolute;
+      top: 38%;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 2;
+      padding: 0 32px;
+      transition: opacity 1.3s ease;
+    }
+
+    .wp-park-sunny .wp-title {
+      font-size: clamp(21px, 6vw, 28px);
+      color: #fff;
+      text-shadow: 0 2px 18px rgba(0,0,0,0.55), 0 0 40px rgba(255,210,60,0.35);
+      font-weight: 800;
+    }
+
+    /* Rain overlay (hidden until .raining) */
+    .wp-rain-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .wp-rain-sky {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(28, 38, 58, 0.82) 0%,
+        rgba(20, 30, 50, 0.75) 60%,
+        rgba(15, 24, 40, 0.65) 100%);
+    }
+
+    .wp-rain-drops {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .rain-drop {
+      position: absolute;
+      width: 1.5px;
+      border-radius: 2px;
+      top: -40px;
+      background: linear-gradient(to bottom,
+        rgba(140, 185, 225, 0) 0%,
+        rgba(150, 195, 235, 0.85) 55%,
+        rgba(140, 180, 220, 0.35) 100%);
+      animation: rainFall linear infinite;
+    }
+
+    @keyframes rainFall {
+      to { transform: translateY(115vh); }
+    }
+
+    /* Rain content — cloud + text */
+    .wp-rain-content {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 32px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.9s 0.7s ease;
+    }
+
+    .wp-rain-cloud {
+      width: 96px;
+      height: 76px;
+      margin-bottom: 22px;
+      filter: drop-shadow(0 4px 22px rgba(100, 160, 220, 0.45));
+    }
+
+    .wp-rain-text {
+      font-size: clamp(16px, 4.8vw, 20px);
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.92);
+      line-height: 1.6;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+      max-width: 290px;
+    }
+
+    /* Trigger classes */
+    #wpParkScene.raining .wp-rain-overlay { opacity: 1; }
+    #wpParkScene.raining .wp-park-sunny   { opacity: 0; }
+    #wpParkScene.raining .wp-rain-content { opacity: 1; }
+
+    /* ── Teaser slide "momentos únicos" ── */
+    .wp-bg-teaser {
+      background: radial-gradient(ellipse 130% 80% at 50% 20%, #1c0b42 0%, #090415 55%, #000 100%);
+    }
+
+    .wp-sparkle-field {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .wp-sparkle {
+      position: absolute;
+      color: rgba(167, 139, 250, 0.85);
+      line-height: 1;
+      opacity: 0;
+      animation: sparkleFloat linear infinite;
+    }
+
+    .wp-ps-icon {
+      position: absolute;
+      color: rgba(255,255,255,0.7);
+      line-height: 1;
+      opacity: 0;
+      font-weight: 900;
+      animation: sparkleFloat linear infinite;
+    }
+
+    @keyframes sparkleFloat {
+      0%   { opacity: 0; transform: translateY(0)   scale(0.4); }
+      18%  { opacity: 1; }
+      75%  { opacity: 0.7; }
+      100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+    }
+
+    .wp-tease-word {
+      font-size: clamp(26px, 8vw, 36px);
+      font-weight: 700;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.01em;
+    }
+
+    .wp-tease-big {
+      font-size: clamp(62px, 18vw, 90px);
+      font-weight: 900;
+      font-family: "Manrope", sans-serif;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      padding-bottom: 4px;
+      background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 55%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 28px rgba(130,140,255,0.45));
+    }
+
+    /* ── Night sky background for timeline ── */
+    .wp-bg-night {
+      background: radial-gradient(ellipse 120% 70% at 50% 0%, #0e1a38 0%, #070e22 45%, #020508 100%);
+    }
+
+    .tl-starfield {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4000px;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .tl-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Timeline shooting meteors */
+    .tl-meteor {
+      position: absolute;
+      width: 2px;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0) 0%,
+        rgba(210,230,255,0.35) 42%,
+        rgba(255,255,255,0.94) 100%
+      );
+      border-radius: 2px;
+      animation: tlMeteorFly ease-out forwards;
+      transform-origin: top center;
+    }
+
+    @keyframes tlMeteorFly {
+      0%   { opacity: 0; transform: translateY(-20px); }
+      14%  { opacity: 1; }
+      82%  { opacity: 0.85; }
+      100% { opacity: 0; transform: translateY(530px); }
+    }
+
+    /* ── Termo game ─────────────────────────────────────────── */
+    .wp-bg-game { background: #0f0f0f; }
+
+    #wpSlide.is-game {
+      overflow-y: auto;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tg-grid { display: flex; flex-direction: column; gap: 5px; width: 100%; max-width: 360px; margin: 0 auto; }
+    .tg-row  { display: flex; gap: 5px; justify-content: center; }
+
+    .tg-cell {
+      flex: 1; max-width: 42px; aspect-ratio: 1;
+      border: 2px solid #3a3a3c; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 900; color: #fff;
+      background: transparent; text-transform: uppercase;
+      font-family: "Manrope", sans-serif;
+    }
+    .tg-cell.filled  { border-color: #565758; }
+    .tg-cell.correct { background: #538d4e; border-color: #538d4e; }
+    .tg-cell.present { background: #b59f3b; border-color: #b59f3b; }
+    .tg-cell.absent  { background: #3a3a3c; border-color: #3a3a3c; }
+
+    .tg-keyboard { width: 100%; padding: 8px 4px; display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+    .tg-kb-row   { display: flex; gap: 5px; justify-content: center; }
+
+    .tg-key {
+      height: 44px; min-width: 28px; flex: 1; max-width: 36px;
+      border-radius: 6px; background: #818384; color: #fff;
+      font-weight: 700; font-size: 12px; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      touch-action: manipulation; user-select: none;
+      font-family: "Manrope", sans-serif;
+    }
+    .tg-key.correct { background: #538d4e; }
+    .tg-key.present { background: #b59f3b; }
+    .tg-key.absent  { background: #3a3a3c; }
+    .tg-key-wide    { max-width: 52px; font-size: 11px; }
+    .tg-key-enter   { max-width: none; flex: 2.2; }
+
+    /* ── Title slide (Tiago & Keisy) ── */
+    .wp-bg-navy {
+      background: radial-gradient(ellipse 130% 90% at 50% 100%, #0d1a40 0%, #060d1f 55%, #000 100%);
+    }
+
+    .wp-bg-indigo {
+      background: radial-gradient(ellipse 130% 90% at 50% 10%, #1a0d3e 0%, #08051a 55%, #000 100%);
+    }
+
+    .wp-name-pair {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      margin-bottom: 30px;
+    }
+
+    .wp-name-big {
+      font-size: clamp(58px, 17vw, 86px);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.05;
+      font-family: "Manrope", sans-serif;
+      letter-spacing: -0.025em;
+      opacity: 0;
+      animation: wpFadeUp 0.7s forwards;
+    }
+
+    .wp-amp {
+      font-size: clamp(36px, 11vw, 54px);
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.38);
+      font-family: "Caveat", cursive;
+      line-height: 1.2;
+      opacity: 0;
+      animation: wpFadeUp 0.6s forwards;
+    }
+
+    .wp-tagline {
+      font-size: clamp(14px, 4vw, 17px);
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.52);
+      line-height: 1.6;
+      text-align: center;
+      letter-spacing: 0.03em;
+      opacity: 0;
+      animation: wpFadeUp 0.6s forwards;
+    }
+
+    /* Teaser build-up lines */
+    .wp-tease-line {
+      font-size: clamp(21px, 6.5vw, 30px);
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.5;
+      text-align: center;
+      opacity: 0;
+      animation: wpFadeUp 0.65s forwards;
     }
 
     .tl-inner {
@@ -928,6 +1284,7 @@
       position: relative;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 64px;
       opacity: 0;
       animation: wpFadeUp 0.5s forwards;
@@ -1094,70 +1451,149 @@
 
     <!-- Gift content (bow + text + hint) -->
     <div id="giftContent">
-      <!-- Bow — SVG rosette -->
+      <!-- Bow — SVG blue satin ribbon bow (reference-accurate) -->
       <div class="g-bow">
-        <svg viewBox="-65 -65 130 130" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 340 215" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <radialGradient id="lg1" cx="35%" cy="30%" r="65%">
-              <stop offset="0%" stop-color="#7de0f5" />
-              <stop offset="55%" stop-color="#1a8ab3" />
-              <stop offset="100%" stop-color="#0a4f6e" />
+            <!-- Left loop: light from upper-left -->
+            <radialGradient id="bLG" cx="33%" cy="30%" r="72%">
+              <stop offset="0%" stop-color="#7DE0F5" />
+              <stop offset="38%" stop-color="#1A9AC0" />
+              <stop offset="100%" stop-color="#063A55" />
             </radialGradient>
-            <radialGradient id="lg2" cx="35%" cy="30%" r="65%">
-              <stop offset="0%" stop-color="#5bcde8" />
-              <stop offset="55%" stop-color="#1278a0" />
-              <stop offset="100%" stop-color="#083a54" />
+            <!-- Right loop: light from upper-right -->
+            <radialGradient id="bRG" cx="67%" cy="30%" r="72%">
+              <stop offset="0%" stop-color="#7DE0F5" />
+              <stop offset="38%" stop-color="#1A9AC0" />
+              <stop offset="100%" stop-color="#063A55" />
             </radialGradient>
-            <radialGradient id="knot" cx="35%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="#9ae8fa" />
-              <stop offset="40%" stop-color="#3DC4F4" />
-              <stop offset="100%" stop-color="#0a5a7a" />
+            <!-- The bright "fold-back" face inside each loop -->
+            <radialGradient id="bFold" cx="52%" cy="42%" r="68%">
+              <stop offset="0%" stop-color="#A8ECFF" />
+              <stop offset="55%" stop-color="#5DD5F5" />
+              <stop offset="100%" stop-color="#1A9AC0" />
             </radialGradient>
+            <!-- Horizontal ribbon band -->
+            <linearGradient id="bRib" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#72E2F8" />
+              <stop offset="28%" stop-color="#3DC4F4" />
+              <stop offset="72%" stop-color="#1690BE" />
+              <stop offset="100%" stop-color="#085878" />
+            </linearGradient>
+            <!-- Knot -->
+            <radialGradient id="bKnot" cx="37%" cy="33%" r="68%">
+              <stop offset="0%" stop-color="#9AE8FA" />
+              <stop offset="48%" stop-color="#3DC4F4" />
+              <stop offset="100%" stop-color="#073D5A" />
+            </radialGradient>
+            <!-- Tails -->
+            <linearGradient id="bTail" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3DC4F4" />
+              <stop offset="100%" stop-color="#0A6080" />
+            </linearGradient>
           </defs>
 
-          <!-- Ribbon tails (behind all loops) -->
-          <path d="M -5 10 Q -22 38 -28 60" stroke="#0a5070" stroke-width="11" fill="none" stroke-linecap="round" />
-          <path d="M  5 10 Q  22 38  28 60" stroke="#0a5070" stroke-width="11" fill="none" stroke-linecap="round" />
-          <path d="M -5 10 Q -22 38 -28 60" stroke="#3DC4F4" stroke-width="4" fill="none" stroke-linecap="round"
-            opacity="0.55" />
-          <path d="M  5 10 Q  22 38  28 60" stroke="#3DC4F4" stroke-width="4" fill="none" stroke-linecap="round"
-            opacity="0.55" />
+          <!-- === TAILS (rendered first, behind everything) === -->
+          <!-- Left tail — angles down-left -->
+          <path d="M 154 104 Q 126 153 110 192 L 126 192 Q 140 154 162 109 Z" fill="url(#bTail)" />
+          <path d="M 157 105 Q 131 152 117 189" stroke="#7DE0F5" stroke-width="3.5"
+            fill="none" opacity="0.6" stroke-linecap="round" />
+          <!-- Right tail — angles down-right -->
+          <path d="M 186 104 Q 214 153 230 192 L 214 192 Q 200 154 178 109 Z" fill="url(#bTail)" />
+          <path d="M 183 105 Q 209 152 223 189" stroke="#7DE0F5" stroke-width="3.5"
+            fill="none" opacity="0.6" stroke-linecap="round" />
 
-          <!-- Back-layer loops (darker, 4 diagonal) -->
-          <ellipse rx="36" ry="13" fill="url(#lg2)" transform="rotate(22.5)" opacity="0.85" />
-          <ellipse rx="36" ry="13" fill="url(#lg2)" transform="rotate(-22.5)" opacity="0.85" />
-          <ellipse rx="36" ry="13" fill="url(#lg2)" transform="rotate(67.5)" opacity="0.85" />
-          <ellipse rx="36" ry="13" fill="url(#lg2)" transform="rotate(-67.5)" opacity="0.85" />
+          <!-- === HORIZONTAL RIBBON BAND === -->
+          <rect x="0" y="90" width="340" height="22" fill="url(#bRib)" rx="1" />
+          <!-- Gloss strip on top -->
+          <rect x="0" y="90" width="340" height="7" fill="rgba(180,245,255,0.48)" rx="1" />
+          <!-- Shadow strip on bottom -->
+          <rect x="0" y="106" width="340" height="6" fill="rgba(0,30,50,0.28)" />
 
-          <!-- Front-layer loops (brighter, 4 cardinal) -->
-          <ellipse rx="36" ry="13" fill="url(#lg1)" transform="rotate(0)" />
-          <ellipse rx="36" ry="13" fill="url(#lg1)" transform="rotate(90)" />
-          <ellipse rx="36" ry="13" fill="url(#lg1)" transform="rotate(45)" />
-          <ellipse rx="36" ry="13" fill="url(#lg1)" transform="rotate(-45)" />
+          <!-- === LEFT LOOP === -->
+          <!-- Cast shadow (offset below/right) -->
+          <path d="M 155 104 C 118 83 50 36 15 65
+                   C -3 84 10 122 40 130
+                   C 80 140 140 112 155 104 Z"
+            fill="#021520" opacity="0.4" transform="translate(4,6)" />
+          <!-- Main loop body — outer face (mid-dark) -->
+          <path d="M 155 102 C 116 72 46 24 12 57
+                   C -6 78 8 120 40 127
+                   C 80 137 140 110 155 102 Z"
+            fill="url(#bLG)" />
+          <!-- Satin highlight — top-outer arc brightens as ribbon curves away -->
+          <path d="M 152 99 C 120 73 64 41 37 52
+                   C 27 57 25 68 36 76
+                   C 64 89 124 97 152 100 Z"
+            fill="rgba(170,240,255,0.52)" />
+          <!-- FOLD-BACK: bright wedge at top-inner (where ribbon folds back to knot) -->
+          <path d="M 155 102 C 136 89 100 73 74 75
+                   C 56 77 46 87 49 96
+                   C 70 108 130 108 155 102 Z"
+            fill="url(#bFold)" />
+          <!-- Fold crease line — dark edge where fold meets outer loop -->
+          <path d="M 155 102 C 128 87 90 73 62 76"
+            stroke="#063A55" stroke-width="2.8" fill="none"
+            opacity="0.75" stroke-linecap="round" />
+          <!-- Inner shadow near knot where loop exits behind -->
+          <path d="M 155 102 C 140 96 120 92 102 96
+                   C 82 100 66 114 58 124
+                   C 88 130 135 112 155 104 Z"
+            fill="rgba(0,20,35,0.38)" />
 
-          <!-- Sheen strip on each front loop -->
-          <ellipse rx="18" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(0)   translate(10 -5)" />
-          <ellipse rx="18" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(90)  translate(10 -5)" />
-          <ellipse rx="18" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(45)  translate(10 -5)" />
-          <ellipse rx="18" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(-45) translate(10 -5)" />
+          <!-- === RIGHT LOOP === -->
+          <!-- Cast shadow -->
+          <path d="M 185 104 C 222 83 290 36 325 65
+                   C 343 84 330 122 300 130
+                   C 260 140 200 112 185 104 Z"
+            fill="#021520" opacity="0.4" transform="translate(-4,6)" />
+          <!-- Main loop body -->
+          <path d="M 185 102 C 224 72 294 24 328 57
+                   C 346 78 332 120 300 127
+                   C 260 137 200 110 185 102 Z"
+            fill="url(#bRG)" />
+          <!-- Satin highlight -->
+          <path d="M 188 99 C 220 73 276 41 303 52
+                   C 313 57 315 68 304 76
+                   C 276 89 216 97 188 100 Z"
+            fill="rgba(170,240,255,0.52)" />
+          <!-- FOLD-BACK: bright wedge at top-inner -->
+          <path d="M 185 102 C 204 89 240 73 266 75
+                   C 284 77 294 87 291 96
+                   C 270 108 210 108 185 102 Z"
+            fill="url(#bFold)" />
+          <!-- Fold crease line -->
+          <path d="M 185 102 C 212 87 250 73 278 76"
+            stroke="#063A55" stroke-width="2.8" fill="none"
+            opacity="0.75" stroke-linecap="round" />
+          <!-- Inner shadow near knot -->
+          <path d="M 185 102 C 200 96 220 92 238 96
+                   C 258 100 274 114 282 124
+                   C 252 130 205 112 185 104 Z"
+            fill="rgba(0,20,35,0.38)" />
 
-          <!-- Centre knot -->
-          <circle r="15" fill="#083a54" />
-          <circle r="12" fill="url(#knot)" />
-          <circle cx="-3" cy="-4" r="5" fill="rgba(255,255,255,0.35)" />
+          <!-- === CENTER KNOT === -->
+          <!-- Outer ring shadow -->
+          <ellipse cx="170" cy="101" rx="24" ry="19" fill="#021520" />
+          <!-- Main knot -->
+          <ellipse cx="170" cy="101" rx="21" ry="16" fill="url(#bKnot)" />
+          <!-- Knot top sheen -->
+          <ellipse cx="164" cy="96" rx="11" ry="7.5" fill="rgba(180,245,255,0.50)" />
+          <!-- Specular spot -->
+          <ellipse cx="162" cy="94" rx="5" ry="3.2" fill="rgba(230,252,255,0.62)" />
         </svg>
       </div>
 
       <!-- Message -->
       <div class="g-msg">
-        <div class="g-badge">✨ Uma surpresa especial</div>
+        <div class="g-badge">✨ Uma surpresa especial ✨</div>
         <h1 class="g-title">Você recebeu um<br />presente especial</h1>
         <p class="g-from">De Tiago, com amor 💌</p>
       </div>
 
       <!-- Arrows hint -->
       <div class="g-hint">
-        <span class="g-hint-text">Toque para abrir</span>
+        <span class="g-hint-text">Arraste para abrir</span>
         <div class="g-arrows">
           <svg class="g-arrow" viewBox="0 0 22 11">
             <path d="M1 1 L11 10 L21 1" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"
@@ -1225,32 +1661,27 @@
                           <div class="swiper-wrapper">
                             <div class="swiper-slide w-full h-full">
                               <div class="relative w-full h-full">
-                                <img alt="Foto do casal 1" class="object-cover w-full h-full"
-                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/68945161-00ba-409e-882c-fd1183a2ef18-ca5c62f381445f44d91cfd9ad2311e50.jpg" />
+                                <img id="f-sw1" alt="Foto do casal 1" class="object-cover w-full h-full" src="" />
                               </div>
                             </div>
                             <div class="swiper-slide w-full h-full">
                               <div class="relative w-full h-full">
-                                <img alt="Foto do casal 2" class="object-cover w-full h-full"
-                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/a2e7c4e9-42d3-4979-ae74-6ce2e01155c3-q5qnrgxrhgoeonqye21m.jpeg" />
+                                <img id="f-sw2" alt="Foto do casal 2" class="object-cover w-full h-full" src="" />
                               </div>
                             </div>
                             <div class="swiper-slide w-full h-full">
                               <div class="relative w-full h-full">
-                                <img alt="Foto do casal 3" class="object-cover w-full h-full"
-                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/cd17eea7-d91e-48e2-a7de-acc7a50c8f7e-3896db5ab0787ea2b35bc9986b516adb.jpg" />
+                                <img id="f-sw3" alt="Foto do casal 3" class="object-cover w-full h-full" src="" />
                               </div>
                             </div>
                             <div class="swiper-slide w-full h-full">
                               <div class="relative w-full h-full">
-                                <img alt="Foto do casal 4" class="object-cover w-full h-full"
-                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/2fba59d3-eb4c-4bcb-aed1-3467f6053dcf-8e62abaee04424cd1b986d6fbed07001.jpg" />
+                                <img id="f-sw4" alt="Foto do casal 4" class="object-cover w-full h-full" src="" />
                               </div>
                             </div>
                             <div class="swiper-slide w-full h-full">
                               <div class="relative w-full h-full">
-                                <img alt="Foto do casal 5" class="object-cover w-full h-full"
-                                  src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/4212a0c9-ad62-445e-9e0a-c32468c01c82-eve-o-malley.jpg" />
+                                <img id="f-sw5" alt="Foto do casal 5" class="object-cover w-full h-full" src="" />
                               </div>
                             </div>
                           </div>
@@ -1383,9 +1814,8 @@
                         <!-- Card header with photo -->
                         <div class="flex flex-col gap-6 rounded-t-2xl h-fit w-full p-4 relative overflow-hidden"
                           style="min-height: 160px">
-                          <img alt="Foto do casal" class="rounded-t-2xl object-cover"
-                            style="position: absolute; height: 100%; width: 100%; inset: 0px"
-                            src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/c811abc1-33fd-4d03-8ec9-d44822223db6-f57a3077c9acfa82f8dece0492e7ba9c.jpg" />
+                          <img id="f-hero" alt="Foto do casal" class="rounded-t-2xl object-cover"
+                            style="position: absolute; height: 100%; width: 100%; inset: 0px" src="" />
                           <div class="absolute inset-0 bg-black bg-opacity-20 rounded-t-2xl"></div>
                           <div class="relative z-10">
                             <span class="text-[#F2F9FE] font-semibold text-xl">Sobre o casal</span>
@@ -1473,8 +1903,7 @@
                           <div
                             class="relative photo-grid-item w-full overflow-hidden rounded-lg cursor-pointer category-mini-card"
                             onclick="openGallery(0)">
-                            <img alt="Nossos Dates" class="object-cover bg-neutral-700 w-full h-full"
-                              src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/fff6fadf-2b29-473d-976d-af034cb6be08-994b8582db6b8017a67d61d96f1c3dd7.jpg" />
+                            <img id="f-gal1" alt="Nossos Dates" class="object-cover bg-neutral-700 w-full h-full" src="" />
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
                             </div>
                             <div class="absolute bottom-2 left-2">
@@ -1486,8 +1915,7 @@
                           <div
                             class="relative photo-grid-item w-full overflow-hidden rounded-lg cursor-pointer category-mini-card"
                             onclick="openGallery(1)">
-                            <img alt="Fotos aleatórias" class="object-cover bg-neutral-700 w-full h-full"
-                              src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/a773c634-2ffc-4623-b592-1774dffa8aeb-0d6cae3bdd8b023b8519c19330fc2da7.jpg" />
+                            <img id="f-gal2" alt="Fotos aleatórias" class="object-cover bg-neutral-700 w-full h-full" src="" />
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
                             </div>
                             <div class="absolute bottom-2 left-2">
@@ -1499,8 +1927,7 @@
                           <div
                             class="relative photo-grid-item w-full overflow-hidden rounded-lg cursor-pointer category-mini-card"
                             onclick="openGallery(2)">
-                            <img alt="Primeira viagem" class="object-cover bg-neutral-700 w-full h-full"
-                              src="https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/70bbf773-59ed-47fb-b232-15c2b05e370f-bf1fcd3cecc3d48bddf3b848afc6bebe.jpg" />
+                            <img id="f-gal3" alt="Primeira viagem" class="object-cover bg-neutral-700 w-full h-full" src="" />
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
                             </div>
                             <div class="absolute bottom-2 left-2">
@@ -1700,6 +2127,10 @@
   </div>
 
   <script>
+    // Sempre inicia no topo (desativa restauração de scroll do browser)
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
+
     // ── Gift intro — drag to unzip (V-shape opening) ─────────
     (function () {
       const intro = document.getElementById("giftIntro");
@@ -1905,6 +2336,99 @@
 
     // ═══════════════════ WRAPPED ═══════════════════════════════
 
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  FOTOS — Edite aqui para trocar qualquer foto do site        ║
+    // ║  Basta substituir o filename (texto após a última /) de cada ║
+    // ║  linha. A URL base é sempre a mesma para todos.              ║
+    // ╚═══════════════════════════════════════════════════════════════╝
+    const MEDIA_BASE = "https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/";
+
+    const FOTOS = {
+      // ── Carrossel de fotos — 5 slides na página principal ─────────
+      swiper: [
+        "68945161-00ba-409e-882c-fd1183a2ef18-ca5c62f381445f44d91cfd9ad2311e50.jpg", // slide 1
+        "a2e7c4e9-42d3-4979-ae74-6ce2e01155c3-q5qnrgxrhgoeonqye21m.jpeg",             // slide 2
+        "cd17eea7-d91e-48e2-a7de-acc7a50c8f7e-3896db5ab0787ea2b35bc9986b516adb.jpg",  // slide 3
+        "2fba59d3-eb4c-4bcb-aed1-3467f6053dcf-8e62abaee04424cd1b986d6fbed07001.jpg",  // slide 4
+        "4212a0c9-ad62-445e-9e0a-c32468c01c82-eve-o-malley.jpg",                       // slide 5
+      ],
+
+      // ── Fundo do card "Sobre o casal" ─────────────────────────────
+      hero: "c811abc1-33fd-4d03-8ec9-d44822223db6-f57a3077c9acfa82f8dece0492e7ba9c.jpg",
+
+      // ── Timeline do Wrapped — 8 fotos em ordem cronológica ────────
+      //    Cada item corresponde a um evento da timeline (mesma ordem)
+      timeline: [
+        "33b1b0cd-683b-45db-938c-3611beaebd8c-f9c75465a503091897c70da1dcc2da75.jpg",  // 1 · Setembro 2023 – No aniversário da Mariana
+        "dd0fbdb4-2147-49c8-b989-d74b91460054-sem-titulo.jpg",                          // 2 · Outubro 2023  – Melhor decisão da minha vida
+        "b3584887-9f95-431a-b819-3bf2c5876652-40d5226377679f32711f9000ed00d04f.jpg",   // 3 · Outubro 2023  – Nosso lugar preferido
+        "fd7dd361-8cae-4798-b455-0f7bda7ccaa0-88c6133b3126db35ed4fb73635ff2988.jpg",   // 4 · Novembro 2023 – Nunca fiquei tão nervoso
+        "6ee91254-c19b-4970-a251-f2ea3abeeab4-9d0074b7abcdbf676277bd17cb3b17cb.jpg",   // 5 · Novembro 2023 – Ainda estou
+        "ef5fa066-0bd6-4fbf-8a16-6639fbfc289d-5d75a080a39de2ec6afeb1d692b38c82.jpg",   // 6 · Dezembro 2023 – São minha família agora
+        "5b3d56f8-4894-4155-a1b9-905f0ddb04c8-bb15343f27edd069a6a0f315617dbfb6.jpg",   // 7 · Janeiro 2024  – Caldas Novas
+        "df5bd547-4d15-4b62-94c3-7fa9954edd72-5a86ecd5bbc802c835b61ae6361f16cf.jpg",   // 8 · Novembro 2023 – Pedido de namoro
+      ],
+
+      // ── Galerias — capas e fotos de cada álbum ────────────────────
+      //    Para adicionar fotos: insira o filename no array "fotos"
+      //    Para trocar a capa: altere o campo "capa"
+      albumDates: {
+        capa: "fff6fadf-2b29-473d-976d-af034cb6be08-994b8582db6b8017a67d61d96f1c3dd7.jpg",
+        fotos: [
+          "2f0d11c9-2f1e-4131-bbc5-402c8c0b3481-3bc1fbda2a9ac431bef7d8cfa73d4a1e.jpg.png",
+          "b52c203a-e771-4d85-8cce-c846f1c270c6-8cb6f7dca9ccc8f03f652b56596ee53d.jpg.png",
+          "5e95d41b-9613-4838-9b72-ab2439a199fa-034b62012f69ccf0a15f1579ecdfd3ca.jpg.png",
+          "91de1f6b-f59d-4476-9b5b-83fb1d033f69-6d97864849aa6d73b9849325406758ed.0000000.jpg.png",
+          "fd306194-e052-4be5-adfc-21bfc01b5163-76aca3e40aa7f4138729bff29294ba5b.jpg.png",
+          "7495ceaa-8e31-459e-95a6-c1354253207e-018abdd9480269f0e0bfc52e7449d5b4.jpg.png",
+          "46096314-69c5-4e59-8ceb-343d5428ed7a-ee4e9475e7b0d09e1dd99bae6f4c468c.jpg.png",
+          "61dc9e23-1cd3-4b83-8982-0de06a1129c0-48fe4cfaa7947679b49c0e0af5b708e6.jpg.png",
+          "dea73bbd-4d1b-48bd-aef9-eb2455c51577-45ea62fbd1855a0f672bb8c4f2e0b168.jpg.png",
+        ],
+      },
+      albumAleatorias: {
+        capa: "a773c634-2ffc-4623-b592-1774dffa8aeb-0d6cae3bdd8b023b8519c19330fc2da7.jpg",
+        fotos: [
+          "e39b457d-3caa-436f-97ea-7a85f96b4e32-414dc38b6499d8c62220055616fc3565.jpg",
+          "0cf2462b-8afc-41bc-b330-f0f2a7672ae8-8a9c093b1ae6ae070464b95ab4525a91.jpg",
+          "b4e5e688-3def-4915-89a3-6e96c76beaae-5cba23025775f4e9e8eb60b94748d5cd.jpg",
+          "7b661e12-56fa-4675-94d3-ba972dcf8f94-abc348ae72f7938748beb391ae46f385.jpg",
+          "1cd399ad-9d8d-419a-a4a5-abf17bde50f1-6c99267585c22891725ad2ccb7900b12.jpg",
+          "74774a78-c82a-450b-9c22-34331607c6c6-6498ff5c8aef381328c248240b6b1e2c.jpg",
+          "3f0a9464-7098-46b9-9659-d2402ac887f6-de362407dd8085b627d0c09ef2b6651a.jpg",
+          "360309e9-50c9-4489-a120-566ce6e1a08d-bc71ff09570bbadbf0999fd0839efd8d.jpg",
+          "ebaec386-2a11-4a52-a923-be7674519363-f02b2e512dabbd3a6b880ba5b5beb783.jpg",
+          "50252533-a361-4e49-9600-c99712e2757c-1da4110b1978edf94fcdc0c4f3f474c0.jpg",
+          "46b7f6dd-bad1-4e25-8bc9-967e5d2517d6-548a571001a1de767a0d6806710416b5.jpg",
+        ],
+      },
+      albumViagem: {
+        capa: "70bbf773-59ed-47fb-b232-15c2b05e370f-bf1fcd3cecc3d48bddf3b848afc6bebe.jpg",
+        fotos: [
+          "c49cd677-6a8f-4a1b-901e-2c2254b6520d-452e080ed75841a5923f9a447038528e.jpg",
+          "a57bbf40-536e-46f1-9f40-c0774ecd323b-bb15343f27edd069a6a0f315617dbfb6.jpg",
+          "693a27f6-7502-4eaf-a283-e545663061bb-93e99da0083153d56674bb00574e2667.jpg",
+          "41ad439e-4d51-4ffe-8e33-cc149de21658-b419aaeaeb8e3fab42ffa5cfe89c6b71.jpg",
+          "8578ee7b-acaa-4d81-9d1d-5216c7859f96-3bb3962c4bcc3f402d7ef7c579f8c42d.jpg",
+          "bb8afc19-97a2-448f-b095-6947563fe43b-e51e365ef84fb9df842cb338962329e3.jpg",
+          "3af96242-d22d-4a21-95a1-a31ee31e6da3-274582549cd9196ce440e6e6eec61456.jpg",
+          "1a49e92d-e5be-475a-9c71-fc1d00387782-748e66892c96d4cf787ce1d500fff007.jpg",
+        ],
+      },
+    };
+
+    // Aplica fotos da config às imagens da página principal
+    FOTOS.swiper.forEach((f, i) => {
+      const el = document.getElementById("f-sw" + (i + 1));
+      if (el) el.src = MEDIA_BASE + f;
+    });
+    const _hero = document.getElementById("f-hero");
+    if (_hero) _hero.src = MEDIA_BASE + FOTOS.hero;
+    [["f-gal1", FOTOS.albumDates.capa], ["f-gal2", FOTOS.albumAleatorias.capa], ["f-gal3", FOTOS.albumViagem.capa]].forEach(([id, f]) => {
+      const el = document.getElementById(id);
+      if (el) el.src = MEDIA_BASE + f;
+    });
+
     const HOURS_TOTAL = Math.floor((new Date() - new Date("2023-11-11T00:00:00")) / 3600000);
 
     const WP_SLIDES = [
@@ -1915,14 +2439,22 @@
         <video id="introVideo" class="intro-video" src="data/intro.mp4"
           autoplay playsinline muted preload="auto"
           disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
-        </video>`,
+        </video>
+        <div class="wp-intro-overlay"></div>
+        <div class="wp-intro-title">
+          <div class="wp-name-pair">
+            <span class="wp-name-big" style="animation-delay:0.4s">Tiago</span>
+            <span class="wp-amp" style="animation-delay:0.85s">&</span>
+            <span class="wp-name-big" style="animation-delay:1.3s">Keisy</span>
+          </div>
+          <p class="wp-tagline" style="animation-delay:1.8s">Os momentos que<br>marcaram essa relação</p>
+        </div>`,
         onEnter: () => {
           document.getElementById("wpSlide").classList.add("is-intro");
           wpStopTimer();
           const vid = document.getElementById("introVideo");
           if (vid) {
             vid.addEventListener("ended", () => wpNext(), { once: true });
-            // Fallback if video fails to load/play
             setTimeout(() => {
               if (vid && !vid.ended) wpNext();
             }, 12000);
@@ -1931,11 +2463,14 @@
       },
       {
         bg: "wp-bg-hours",
+        duration: 7000,
         render: () => `
-        <div class="wp-kicker">vocês ficaram juntos</div>
-        <div class="wp-number" id="wpCounter">0</div>
-        <div class="wp-unit">horas juntos</div>`,
-        onEnter: () => setTimeout(() => animateCounter("wpCounter", 0, HOURS_TOTAL, 2400), 400),
+        <div class="wp-tease-line" style="animation-delay:0.2s">Várias histórias,</div>
+        <div class="wp-tease-line" style="animation-delay:0.72s">momentos e</div>
+        <div class="wp-tease-line" style="animation-delay:1.24s">conexões que totalizam...</div>
+        <div class="wp-number" id="wpTeaseCnt" style="margin-top:22px;animation-delay:1.8s">0</div>
+        <div class="wp-unit" style="animation-delay:2.05s">horas juntos</div>`,
+        onEnter: () => setTimeout(() => animateCounter("wpTeaseCnt", 0, HOURS_TOTAL, 3400), 1400),
       },
       {
         bg: "wp-bg-teal",
@@ -1955,67 +2490,207 @@
         },
       },
       {
-        bg: "wp-bg-pink",
+        bg: "wp-bg-park",
+        isPark: true,
+        duration: 9000,
+        render: () => {
+          // Deterministic rain drops (golden-angle distribution)
+          const drops = Array.from({ length: 72 }, (_, i) => {
+            const x = ((i * 137.508) % 100).toFixed(1);
+            const h = 14 + (i % 6) * 5;
+            const dur = (0.42 + (i % 8) * 0.07).toFixed(2);
+            const delay = -((i * 0.19) % 2.2).toFixed(2);
+            const op = (0.5 + (i % 5) * 0.1).toFixed(1);
+            return `<div class="rain-drop" style="left:${x}%;height:${h}px;animation-duration:${dur}s;animation-delay:${delay}s;opacity:${op}"></div>`;
+          }).join("");
+          return `
+          <div id="wpParkScene" class="wp-park-scene">
+            <!-- Park SVG background -->
+            <svg class="wp-park-bg" viewBox="0 0 320 580" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="pkSky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3BB5E0"/>
+                  <stop offset="55%" stop-color="#78CCEE"/>
+                  <stop offset="100%" stop-color="#B2E3F5"/>
+                </linearGradient>
+                <linearGradient id="pkGrass" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#5DBE5D"/>
+                  <stop offset="100%" stop-color="#3A7D3A"/>
+                </linearGradient>
+                <radialGradient id="pkSun" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#FFF176"/>
+                  <stop offset="100%" stop-color="#FFD600"/>
+                </radialGradient>
+                <radialGradient id="pkLake" cx="48%" cy="32%" r="62%">
+                  <stop offset="0%" stop-color="#B8E4F7"/>
+                  <stop offset="50%" stop-color="#5AABD4"/>
+                  <stop offset="100%" stop-color="#3A85AA"/>
+                </radialGradient>
+              </defs>
+              <!-- Sky -->
+              <rect width="320" height="580" fill="url(#pkSky)"/>
+              <!-- Sun glow halos -->
+              <circle cx="268" cy="54" r="52" fill="#FFE566" opacity="0.14"/>
+              <circle cx="268" cy="54" r="38" fill="#FFE566" opacity="0.20"/>
+              <circle cx="268" cy="54" r="26" fill="url(#pkSun)"/>
+              <!-- Sun rays -->
+              <g stroke="#FFD600" stroke-width="3" stroke-linecap="round" opacity="0.75">
+                <line x1="268" y1="18" x2="268" y2="8"/>
+                <line x1="268" y1="90" x2="268" y2="100"/>
+                <line x1="232" y1="54" x2="222" y2="54"/>
+                <line x1="304" y1="54" x2="314" y2="54"/>
+                <line x1="242" y1="28" x2="235" y2="21"/>
+                <line x1="294" y1="80" x2="301" y2="87"/>
+                <line x1="294" y1="28" x2="301" y2="21"/>
+                <line x1="242" y1="80" x2="235" y2="87"/>
+              </g>
+              <!-- Clouds -->
+              <ellipse cx="74" cy="88" rx="38" ry="17" fill="rgba(255,255,255,0.78)"/>
+              <ellipse cx="100" cy="78" rx="30" ry="21" fill="rgba(255,255,255,0.78)"/>
+              <ellipse cx="50" cy="84" rx="26" ry="15" fill="rgba(255,255,255,0.68)"/>
+              <ellipse cx="195" cy="108" rx="32" ry="14" fill="rgba(255,255,255,0.65)"/>
+              <ellipse cx="218" cy="100" rx="26" ry="17" fill="rgba(255,255,255,0.65)"/>
+              <!-- Ground -->
+              <rect x="0" y="340" width="320" height="240" fill="url(#pkGrass)"/>
+              <path d="M 0 340 Q 80 328 160 340 Q 240 352 320 335 L 320 358 L 0 358 Z" fill="#5DBE5D"/>
+              <!-- Lake -->
+              <ellipse cx="160" cy="402" rx="88" ry="36" fill="url(#pkLake)"/>
+              <ellipse cx="142" cy="392" rx="36" ry="10" fill="rgba(255,255,255,0.22)"/>
+              <path d="M 72 402 Q 160 378 248 402" stroke="rgba(200,235,248,0.45)" stroke-width="1.5" fill="none"/>
+              <!-- Lake reflection of sky -->
+              <ellipse cx="160" cy="402" rx="88" ry="36" fill="rgba(60,150,210,0.12)"/>
+              <!-- Park path -->
+              <path d="M 60 428 Q 160 458 260 428" stroke="#C8A878" stroke-width="9" fill="none" stroke-linecap="round" opacity="0.52"/>
+              <!-- TREES — left cluster -->
+              <!-- Far back left -->
+              <rect x="14" y="252" width="9" height="100" fill="#5C3317" rx="2"/>
+              <ellipse cx="18" cy="240" rx="20" ry="26" fill="#1A4510" opacity="0.88"/>
+              <ellipse cx="18" cy="228" rx="14" ry="18" fill="#235518"/>
+              <!-- Main left tall -->
+              <rect x="40" y="238" width="13" height="114" fill="#6B4226" rx="3"/>
+              <ellipse cx="46" cy="222" rx="30" ry="36" fill="#256620"/>
+              <ellipse cx="46" cy="206" rx="21" ry="25" fill="#3A8030"/>
+              <ellipse cx="40" cy="204" rx="10" ry="8" fill="rgba(170,230,110,0.28)"/>
+              <!-- Front small left -->
+              <rect x="74" y="258" width="10" height="94" fill="#6B4226" rx="2"/>
+              <ellipse cx="79" cy="247" rx="24" ry="28" fill="#2D7020"/>
+              <ellipse cx="79" cy="237" rx="16" ry="19" fill="#3A8030"/>
+              <!-- Extra bush left -->
+              <ellipse cx="22" cy="358" rx="18" ry="12" fill="#3A7A20"/>
+              <ellipse cx="36" cy="354" rx="14" ry="10" fill="#4A8828"/>
+              <!-- TREES — right cluster -->
+              <!-- Far back right -->
+              <rect x="297" y="250" width="9" height="102" fill="#5C3317" rx="2"/>
+              <ellipse cx="301" cy="238" rx="20" ry="26" fill="#1A4510" opacity="0.88"/>
+              <ellipse cx="301" cy="226" rx="14" ry="18" fill="#235518"/>
+              <!-- Main right tall -->
+              <rect x="258" y="234" width="14" height="118" fill="#6B4226" rx="3"/>
+              <ellipse cx="265" cy="218" rx="32" ry="37" fill="#256620"/>
+              <ellipse cx="265" cy="202" rx="22" ry="26" fill="#3A8030"/>
+              <ellipse cx="259" cy="200" rx="11" ry="8" fill="rgba(170,230,110,0.28)"/>
+              <!-- Front small right -->
+              <rect x="234" y="255" width="10" height="97" fill="#6B4226" rx="2"/>
+              <ellipse cx="239" cy="244" rx="24" ry="28" fill="#2D7020"/>
+              <ellipse cx="239" cy="234" rx="16" ry="19" fill="#3A8030"/>
+              <!-- Extra bush right -->
+              <ellipse cx="298" cy="356" rx="18" ry="12" fill="#3A7A20"/>
+              <ellipse cx="284" cy="352" rx="14" ry="10" fill="#4A8828"/>
+              <!-- Foreground grass -->
+              <path d="M 0 490 Q 80 476 160 484 Q 240 492 320 478 L 320 580 L 0 580 Z" fill="#3A7030" opacity="0.7"/>
+              <!-- Grass tufts -->
+              <path d="M 108 350 L 110 341 L 112 350" stroke="#4A9A4A" stroke-width="1.8" fill="none"/>
+              <path d="M 116 347 L 118 336 L 120 347" stroke="#4A9A4A" stroke-width="1.8" fill="none"/>
+              <path d="M 196 352 L 198 343 L 200 352" stroke="#4A9A4A" stroke-width="1.8" fill="none"/>
+              <path d="M 205 348 L 207 338 L 209 348" stroke="#4A9A4A" stroke-width="1.8" fill="none"/>
+            </svg>
+
+            <!-- Sunny scene text -->
+            <div class="wp-park-sunny">
+              <p class="wp-title" style="animation-delay:0.3s">Nos conhecemos num<br>belo dia de sol ☀️</p>
+            </div>
+
+            <!-- Rain overlay -->
+            <div class="wp-rain-overlay">
+              <div class="wp-rain-sky"></div>
+              <div class="wp-rain-drops">${drops}</div>
+              <div class="wp-rain-content">
+                <svg class="wp-rain-cloud" viewBox="0 0 110 88" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="cloudG" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#B0C8DC"/>
+                      <stop offset="100%" stop-color="#7A9AB4"/>
+                    </linearGradient>
+                  </defs>
+                  <!-- Cloud body -->
+                  <ellipse cx="55" cy="40" rx="35" ry="20" fill="url(#cloudG)"/>
+                  <circle cx="38" cy="44" r="17" fill="url(#cloudG)"/>
+                  <circle cx="72" cy="44" r="17" fill="url(#cloudG)"/>
+                  <ellipse cx="55" cy="48" rx="35" ry="16" fill="#8AAEC6"/>
+                  <!-- Cloud top bumps -->
+                  <circle cx="43" cy="32" r="15" fill="#B8CED8"/>
+                  <circle cx="65" cy="28" r="17" fill="#C0D4E0"/>
+                  <circle cx="55" cy="24" r="13" fill="#C8DAE8"/>
+                  <!-- Highlight -->
+                  <ellipse cx="48" cy="25" rx="10" ry="6" fill="rgba(255,255,255,0.3)"/>
+                  <!-- Rain drops from cloud -->
+                  <line x1="36" y1="62" x2="32" y2="76" stroke="#6CA8CC" stroke-width="3.5" stroke-linecap="round"/>
+                  <line x1="55" y1="65" x2="51" y2="79" stroke="#6CA8CC" stroke-width="3.5" stroke-linecap="round"/>
+                  <line x1="74" y1="62" x2="70" y2="76" stroke="#6CA8CC" stroke-width="3.5" stroke-linecap="round"/>
+                </svg>
+                <p class="wp-rain-text">Só não esperávamos a surpresa de uma chuva, confiando no app de previsão 🌧️</p>
+              </div>
+            </div>
+          </div>`;
+        },
+        onEnter: () => setTimeout(() => {
+          const s = document.getElementById("wpParkScene");
+          if (s) s.classList.add("raining");
+        }, 3800),
+      },
+      {
+        bg: "wp-bg-teaser",
+        render: () => {
+          // Sparkles — top band (0–22%) + scattered lower
+          const sparks = Array.from({ length: 22 }, (_, i) => {
+            const x = ((i * 137.508) % 100).toFixed(1);
+            const y = i < 12
+              ? ((i * 57.3) % 22).toFixed(1)        // top 22%
+              : ((i * 89.2) % 68 + 24).toFixed(1);  // rest of screen
+            const sz = 8 + (i % 5) * 4;
+            const dur = (1.2 + (i % 5) * 0.32).toFixed(2);
+            const delay = (i * 0.27).toFixed(2);
+            return `<span class="wp-sparkle" style="left:${x}%;top:${y}%;font-size:${sz}px;animation-duration:${dur}s;animation-delay:${delay}s">✦</span>`;
+          }).join("");
+          return `
+          <div class="wp-sparkle-field">${sparks}</div>
+          <div class="wp-kicker" style="animation-delay:0.2s;position:relative;z-index:1">Que tal relembrar</div>
+          <div style="opacity:0;animation:wpFadeUp 0.7s 0.55s forwards;position:relative;z-index:1">
+            <span class="wp-tease-word">momentos</span>
+          </div>
+          <div class="wp-tease-big" style="opacity:0;animation:wpFadeUp 0.8s 1.0s forwards;position:relative;z-index:1;display:block;margin-top:4px">únicos</div>`;
+        },
+      },
+      {
+        bg: "wp-bg-night",
         isTimeline: true,
         render: () => {
-          const B = "https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/";
+          // Static star field (deterministic)
+          const stars = Array.from({ length: 130 }, (_, i) => {
+            const x = ((i * 137.508) % 100).toFixed(1);
+            const y = Math.round((i * 89.2 * 38) % 3800);
+            const sz = i % 3 === 0 ? 2 : i % 3 === 1 ? 1.5 : 1;
+            const op = (0.3 + (i % 5) * 0.14).toFixed(2);
+            return `<div style="position:absolute;left:${x}%;top:${y}px;width:${sz}px;height:${sz}px;border-radius:50%;background:#fff;opacity:${op}"></div>`;
+          }).join("");
           const events = [
-            {
-              date: "Setembro 2023",
-              caption: "No aniversário da Mariana",
-              desc: "Nossas almas se encontraram pela primeira vez",
-              img: "33b1b0cd-683b-45db-938c-3611beaebd8c-f9c75465a503091897c70da1dcc2da75.jpg",
-              side: "left",
-            },
-            {
-              date: "Outubro 2023",
-              caption: "Melhor decisão da minha vida",
-              desc: "Enviei a primeira mensagem",
-              img: "dd0fbdb4-2147-49c8-b989-d74b91460054-sem-titulo.jpg",
-              side: "right",
-            },
-            {
-              date: "Outubro 2023",
-              caption: "Nosso lugar preferido",
-              desc: "Primeiro encontro",
-              img: "b3584887-9f95-431a-b819-3bf2c5876652-40d5226377679f32711f9000ed00d04f.jpg",
-              side: "left",
-            },
-            {
-              date: "Novembro 2023",
-              caption: "Nunca fiquei tão nervoso",
-              desc: "Nosso primeiro beijo",
-              img: "fd7dd361-8cae-4798-b455-0f7bda7ccaa0-88c6133b3126db35ed4fb73635ff2988.jpg",
-              side: "right",
-            },
-            {
-              date: "Novembro 2023",
-              caption: "Ainda estou",
-              desc: "Eu já estava perdidamente apaixonado",
-              img: "6ee91254-c19b-4970-a251-f2ea3abeeab4-9d0074b7abcdbf676277bd17cb3b17cb.jpg",
-              side: "left",
-            },
-            {
-              date: "Dezembro 2023",
-              caption: "São minha família agora",
-              desc: "Conheci sua família pela primeira vez",
-              img: "ef5fa066-0bd6-4fbf-8a16-6639fbfc289d-5d75a080a39de2ec6afeb1d692b38c82.jpg",
-              side: "right",
-            },
-            {
-              date: "Janeiro 2024",
-              caption: "Caldas Novas",
-              desc: "Primeira viagem juntos",
-              img: "5b3d56f8-4894-4155-a1b9-905f0ddb04c8-bb15343f27edd069a6a0f315617dbfb6.jpg",
-              side: "left",
-            },
-            {
-              date: "Novembro 2023",
-              caption: "A oficialização de algo único",
-              desc: "Pedido de namoro",
-              img: "df5bd547-4d15-4b62-94c3-7fa9954edd72-5a86ecd5bbc802c835b61ae6361f16cf.jpg",
-              side: "right",
-            },
+            { date: "Setembro 2023", caption: "No aniversário da Mariana",   desc: "Nossas almas se encontraram pela primeira vez", side: "left"  },
+            { date: "Outubro 2023",  caption: "Melhor decisão da minha vida", desc: "Enviei a primeira mensagem",                    side: "right" },
+            { date: "Outubro 2023",  caption: "Nosso lugar preferido",        desc: "Primeiro encontro",                            side: "left"  },
+            { date: "Novembro 2023", caption: "Nunca fiquei tão nervoso",     desc: "Nosso primeiro beijo",                         side: "right" },
+            { date: "Novembro 2023", caption: "Ainda estou",                  desc: "Eu já estava perdidamente apaixonado",         side: "left"  },
+            { date: "Dezembro 2023", caption: "São minha família agora",      desc: "Conheci sua família pela primeira vez",        side: "right" },
+            { date: "Janeiro 2024",  caption: "Caldas Novas",                 desc: "Primeira viagem juntos",                       side: "left"  },
+            { date: "Novembro 2023", caption: "A oficialização de algo único", desc: "Pedido de namoro",                            side: "right" },
           ];
           const heart = `<svg width="18" height="18" viewBox="0 0 24 24" fill="#F472B6" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
           const eventsHtml = events
@@ -2024,7 +2699,7 @@
           <div class="tl-event ${e.side}" style="animation-delay:${0.1 + i * 0.08}s">
             <div class="tl-polaroid">
               <div class="tl-polaroid-inner">
-                <img class="tl-photo" src="${B}${e.img}" alt="${e.caption}" loading="lazy">
+                <img class="tl-photo" src="${MEDIA_BASE}${FOTOS.timeline[i]}" alt="${e.caption}" loading="lazy">
                 <p class="tl-caption">${e.caption}</p>
               </div>
             </div>
@@ -2036,20 +2711,75 @@
           </div>`,
             )
             .join("");
-          return `<div class="tl-inner">
-          <div class="tl-line"></div>
-          <div class="tl-title">
-            <h1>Nossa Jornada</h1>
-            <p>Cada momento que nos trouxe até aqui</p>
-          </div>
-          ${eventsHtml}
-          <p class="tl-closing">E estamos apenas começando!</p>
-          <button class="tl-next-btn" onclick="wpNext()">Próxima Seção →</button>
-        </div>`;
+          return `
+          <div class="tl-starfield">${stars}</div>
+          <div class="tl-inner">
+            <div class="tl-line"></div>
+            <div class="tl-title">
+              <h1>Nossa Jornada</h1>
+              <p>Cada momento que nos trouxe até aqui</p>
+            </div>
+            ${eventsHtml}
+            <p class="tl-closing">E estamos apenas começando!</p>
+            <button class="tl-next-btn" onclick="wpNext()">Próxima Seção →</button>
+          </div>`;
         },
         onEnter: () => {
           document.getElementById("wpSlide").classList.add("is-timeline");
           document.getElementById("wpSlide").scrollTop = 0;
+          startMeteors();
+        },
+      },
+      {
+        bg: "wp-bg-game",
+        duration: 3500,
+        render: () => {
+          const psIcons = ["✕","○","□","△"];
+          const icons = Array.from({ length: 20 }, (_, i) => {
+            const sym = psIcons[i % 4];
+            const x = ((i * 137.508) % 100).toFixed(1);
+            const y = i < 10
+              ? ((i * 57.3) % 22).toFixed(1)
+              : ((i * 89.2) % 68 + 24).toFixed(1);
+            const sz = 10 + (i % 4) * 5;
+            const dur = (1.3 + (i % 5) * 0.33).toFixed(2);
+            const delay = (i * 0.28).toFixed(2);
+            return `<span class="wp-ps-icon" style="left:${x}%;top:${y}%;font-size:${sz}px;animation-duration:${dur}s;animation-delay:${delay}s">${sym}</span>`;
+          }).join("");
+          return `
+          <div class="wp-sparkle-field">${icons}</div>
+          <div class="wp-tease-big" style="opacity:0;animation:wpFadeUp 0.8s 0.4s forwards;position:relative;z-index:1;display:block">Vamos jogar</div>
+          <div class="wp-tease-big" style="opacity:0;animation:wpFadeUp 0.8s 0.85s forwards;position:relative;z-index:1;display:block;margin-top:4px">um jogo?</div>`;
+        },
+      },
+      {
+        bg: "wp-bg-game",
+        isGame: true,
+        render: () => {
+          const W = TG_WORD.length;
+          const grid = Array.from({length: 6}, (_, r) =>
+            `<div class="tg-row" id="tg-r${r}">${Array.from({length: W}, () => `<div class="tg-cell"></div>`).join("")}</div>`
+          ).join("");
+          const row1 = "QWERTYUIOP".split("").map(k => `<button class="tg-key" data-k="${k}" onclick="tgInput('${k}')">${k}</button>`).join("");
+          const row2 = "ASDFGHJKL".split("").map(k  => `<button class="tg-key" data-k="${k}" onclick="tgInput('${k}')">${k}</button>`).join("");
+          const row3 = "ZXCVBNM".split("").map(k    => `<button class="tg-key" data-k="${k}" onclick="tgInput('${k}')">${k}</button>`).join("");
+          return `
+          <div style="flex:1;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 12px 8px">
+            <p style="font-size:clamp(36px,12vw,52px);font-weight:900;color:#fff;margin-bottom:8px;text-align:center;font-family:'Manrope',sans-serif;line-height:1.15">O que eu mais<br>gosto em<br>você</p>
+            <p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:18px;text-align:center">Descubra a palavra secreta (${W} letras)</p>
+            <div class="tg-grid">${grid}</div>
+            <div id="tgResult" style="display:none;flex-direction:column;align-items:center;padding:12px 0 4px"></div>
+          </div>
+          <div class="tg-keyboard" style="max-width:380px;width:100%">
+            <div class="tg-kb-row">${row1}</div>
+            <div class="tg-kb-row">${row2}</div>
+            <div class="tg-kb-row">${row3}<button class="tg-key tg-key-wide" data-k="DEL" onclick="tgInput('DEL')">⌫</button></div>
+            <div class="tg-kb-row"><button class="tg-key tg-key-enter" onclick="tgInput('ENTER')">ENTER</button></div>
+          </div>`;
+        },
+        onEnter: () => {
+          document.getElementById("wpSlide").classList.add("is-game");
+          tgStart();
         },
       },
       {
@@ -2179,6 +2909,132 @@
       requestAnimationFrame(anim);
     }
 
+    let tlMeteorTimer = null;
+
+    function spawnMeteor() {
+      const field = document.getElementById("tlMeteorField");
+      if (!field) return;
+      const wrap = document.createElement("div");
+      const m = document.createElement("div");
+      m.className = "tl-meteor";
+      const x = 8 + Math.floor(Math.random() * 84);
+      const angle = -(33 + Math.floor(Math.random() * 24));
+      const len = 55 + Math.floor(Math.random() * 55);
+      const dur = 620 + Math.floor(Math.random() * 480);
+      wrap.style.cssText = `position:absolute;left:${x}%;top:0;transform:rotate(${angle}deg);transform-origin:top center;pointer-events:none`;
+      m.style.cssText = `width:2px;height:${len}px;animation-duration:${dur}ms`;
+      wrap.appendChild(m);
+      field.appendChild(wrap);
+      m.addEventListener("animationend", () => wrap.remove(), { once: true });
+    }
+
+    function startMeteors() {
+      stopMeteors();
+      const field = document.createElement("div");
+      field.id = "tlMeteorField";
+      field.style.cssText = "position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden";
+      document.getElementById("wrappedOverlay").appendChild(field);
+      function next() {
+        spawnMeteor();
+        tlMeteorTimer = setTimeout(next, 1200 + Math.floor(Math.random() * 2800));
+      }
+      tlMeteorTimer = setTimeout(next, 600 + Math.floor(Math.random() * 1000));
+    }
+
+    function stopMeteors() {
+      clearTimeout(tlMeteorTimer);
+      tlMeteorTimer = null;
+      const f = document.getElementById("tlMeteorField");
+      if (f) f.remove();
+    }
+
+    // ── Termo game ────────────────────────────────────────────
+    const TG_WORD = "PARCEIRA";
+    let tgGuesses = [], tgCurrent = "", tgOver = false, tgKeyHandler = null;
+
+    function tgCheck(guess) {
+      const res = Array(TG_WORD.length).fill("absent");
+      const pool = TG_WORD.split(""), g = guess.split("");
+      for (let i = 0; i < TG_WORD.length; i++) {
+        if (g[i] === pool[i]) { res[i] = "correct"; pool[i] = g[i] = null; }
+      }
+      for (let i = 0; i < TG_WORD.length; i++) {
+        if (!g[i]) continue;
+        const j = pool.indexOf(g[i]);
+        if (j !== -1) { res[i] = "present"; pool[j] = null; }
+      }
+      return res;
+    }
+
+    function tgRender() {
+      for (let r = 0; r < 6; r++) {
+        const row = document.getElementById("tg-r" + r);
+        if (!row) return;
+        const cells = row.querySelectorAll(".tg-cell");
+        if (r < tgGuesses.length) {
+          const res = tgCheck(tgGuesses[r]);
+          cells.forEach((c, i) => { c.textContent = tgGuesses[r][i]; c.className = "tg-cell " + res[i]; });
+        } else if (r === tgGuesses.length) {
+          cells.forEach((c, i) => { c.textContent = tgCurrent[i] || ""; c.className = "tg-cell" + (tgCurrent[i] ? " filled" : ""); });
+        } else {
+          cells.forEach(c => { c.textContent = ""; c.className = "tg-cell"; });
+        }
+      }
+      const states = {};
+      tgGuesses.forEach(g => tgCheck(g).forEach((s, i) => {
+        const l = g[i], cur = states[l];
+        if (s === "correct" || (s === "present" && cur !== "correct") || (!cur && s === "absent")) states[l] = s;
+      }));
+      document.querySelectorAll(".tg-key[data-k]").forEach(b => {
+        const s = states[b.dataset.k];
+        const wide = b.classList.contains("tg-key-wide"), ent = b.classList.contains("tg-key-enter");
+        b.className = "tg-key" + (s ? " " + s : "") + (wide ? " tg-key-wide" : "") + (ent ? " tg-key-enter" : "");
+      });
+    }
+
+    function tgInput(k) {
+      if (tgOver) return;
+      if (k === "ENTER") {
+        if (tgCurrent.length < TG_WORD.length) return;
+        tgGuesses.push(tgCurrent);
+        const won = tgCurrent === TG_WORD;
+        tgCurrent = "";
+        tgRender();
+        if (won || tgGuesses.length >= 6) { tgOver = true; tgShowResult(won); }
+      } else if (k === "DEL") {
+        tgCurrent = tgCurrent.slice(0, -1); tgRender();
+      } else if (tgCurrent.length < TG_WORD.length) {
+        tgCurrent += k; tgRender();
+      }
+    }
+
+    function tgShowResult(won) {
+      const el = document.getElementById("tgResult");
+      if (!el) return;
+      el.style.display = "flex";
+      el.innerHTML = won
+        ? `<p style="color:#538d4e;font-size:17px;font-weight:800;margin-bottom:12px;text-align:center">🎉 Parabéns! Você acertou!</p>`
+        : `<p style="color:rgba(255,255,255,0.85);font-size:14px;font-weight:600;margin-bottom:6px;text-align:center">Não foi dessa vez... A palavra era</p>
+           <p style="color:#fff;font-size:22px;font-weight:900;letter-spacing:0.12em;margin-bottom:12px">${TG_WORD}</p>`;
+      el.innerHTML += `<button onclick="wpNext()" style="padding:12px 32px;border-radius:24px;background:#fff;color:#111;font-weight:700;font-size:14px;border:none;cursor:pointer">Próxima Seção →</button>`;
+    }
+
+    function tgStart() {
+      tgGuesses = []; tgCurrent = ""; tgOver = false;
+      tgKeyHandler = e => {
+        const k = e.key.toUpperCase();
+        if (/^[A-Z]$/.test(k)) tgInput(k);
+        else if (e.key === "Enter") tgInput("ENTER");
+        else if (e.key === "Backspace") tgInput("DEL");
+      };
+      document.addEventListener("keydown", tgKeyHandler);
+      tgRender();
+    }
+
+    function tgDestroy() {
+      if (tgKeyHandler) { document.removeEventListener("keydown", tgKeyHandler); tgKeyHandler = null; }
+    }
+
     let starInterval = null;
     function startStars() {
       const svg = document.getElementById("wpStars");
@@ -2199,7 +3055,8 @@
     const WP_SLIDE_MS = 5000;
 
     function wpTimerTick(now) {
-      const pct = Math.min(100, ((now - wpTimerStart) / WP_SLIDE_MS) * 100);
+      const dur = WP_SLIDES[wpIdx]?.duration || WP_SLIDE_MS;
+      const pct = Math.min(100, ((now - wpTimerStart) / dur) * 100);
       const fills = document.querySelectorAll(".wp-bar-fill");
       if (fills[wpIdx]) fills[wpIdx].style.width = pct + "%";
       if (pct >= 100) wpNext();
@@ -2219,9 +3076,10 @@
     }
 
     function wpPause() {
-      if (wpPaused || !wpTimerStart || WP_SLIDES[wpIdx]?.isTimeline) return;
+      if (wpPaused || !wpTimerStart || WP_SLIDES[wpIdx]?.isTimeline || WP_SLIDES[wpIdx]?.isGame) return;
       wpPaused = true;
-      wpPauseElapsed = Math.min(WP_SLIDE_MS - 50, performance.now() - wpTimerStart);
+      const dur = WP_SLIDES[wpIdx]?.duration || WP_SLIDE_MS;
+      wpPauseElapsed = Math.min(dur - 50, performance.now() - wpTimerStart);
       wpStopTimer();
     }
 
@@ -2247,7 +3105,7 @@
         const held = performance.now() - pressStart;
         wpResume();
         // Tap curto → navega (só se não for slide de timeline)
-        if (held < TAP_MS && !WP_SLIDES[wpIdx]?.isTimeline) {
+        if (held < TAP_MS && !WP_SLIDES[wpIdx]?.isTimeline && !WP_SLIDES[wpIdx]?.isGame) {
           if (clientX < window.innerWidth / 2) wpPrev();
           else wpNext();
         }
@@ -2275,9 +3133,12 @@
 
     function renderWpSlide() {
       stopIntroParticles();
+      stopMeteors();
+      tgDestroy();
       const slide = WP_SLIDES[wpIdx];
       const el = document.getElementById("wpSlide");
-      el.className = ""; // reset (removes is-timeline, is-intro etc.)
+      el.className = ""; // reset (removes is-timeline, is-intro, is-park etc.)
+      if (slide.isPark) el.classList.add("is-park");
       el.innerHTML = slide.render();
 
       // Apply bg gradient to overlay
@@ -2291,11 +3152,11 @@
       // Tap zones: disable on timeline so scroll doesn't trigger slide change
       const wpTapL = document.getElementById("wpTapL");
       const wpTapR = document.getElementById("wpTapR");
-      if (wpTapL) wpTapL.style.pointerEvents = slide.isTimeline ? "none" : "";
-      if (wpTapR) wpTapR.style.pointerEvents = slide.isTimeline ? "none" : "";
+      if (wpTapL) wpTapL.style.pointerEvents = (slide.isTimeline || slide.isGame) ? "none" : "";
+      if (wpTapR) wpTapR.style.pointerEvents = (slide.isTimeline || slide.isGame) ? "none" : "";
 
-      // Timeline slide: no auto-advance (user scrolls + taps "Próxima Seção")
-      if (slide.isTimeline) {
+      // Timeline / game slides: no auto-advance
+      if (slide.isTimeline || slide.isGame) {
         wpStopTimer();
         const fills = document.querySelectorAll(".wp-bar-fill");
         if (fills[wpIdx]) fills[wpIdx].style.width = "50%";
@@ -2327,15 +3188,16 @@
       document.getElementById("wrappedOverlay").classList.add("open");
       document.body.style.overflow = "hidden";
       renderWpSlide();
-      startStars();
     }
 
     function closeWrapped() {
       wpStopTimer();
       stopStars();
+      stopMeteors();
       stopIntroParticles();
       document.getElementById("wrappedOverlay").classList.remove("open");
       document.body.style.overflow = "";
+      window.scrollTo({ top: 0, behavior: "instant" });
     }
 
     // Touch swipe left/right on wrapped
@@ -2367,53 +3229,22 @@
     });
 
     // ── Gallery (Full-screen Stories style) ──────────────────
-    const BASE = "https://media.lovepanda.com.br/6869f8fe9c551761be8948fd/";
+    // Fotos geradas a partir do bloco FOTOS (editável acima)
     const GALLERIES = [
       {
         title: "Nossos Dates",
-        cover: BASE + "fff6fadf-2b29-473d-976d-af034cb6be08-994b8582db6b8017a67d61d96f1c3dd7.jpg",
-        photos: [
-          BASE + "2f0d11c9-2f1e-4131-bbc5-402c8c0b3481-3bc1fbda2a9ac431bef7d8cfa73d4a1e.jpg.png",
-          BASE + "b52c203a-e771-4d85-8cce-c846f1c270c6-8cb6f7dca9ccc8f03f652b56596ee53d.jpg.png",
-          BASE + "5e95d41b-9613-4838-9b72-ab2439a199fa-034b62012f69ccf0a15f1579ecdfd3ca.jpg.png",
-          BASE + "91de1f6b-f59d-4476-9b5b-83fb1d033f69-6d97864849aa6d73b9849325406758ed.0000000.jpg.png",
-          BASE + "fd306194-e052-4be5-adfc-21bfc01b5163-76aca3e40aa7f4138729bff29294ba5b.jpg.png",
-          BASE + "7495ceaa-8e31-459e-95a6-c1354253207e-018abdd9480269f0e0bfc52e7449d5b4.jpg.png",
-          BASE + "46096314-69c5-4e59-8ceb-343d5428ed7a-ee4e9475e7b0d09e1dd99bae6f4c468c.jpg.png",
-          BASE + "61dc9e23-1cd3-4b83-8982-0de06a1129c0-48fe4cfaa7947679b49c0e0af5b708e6.jpg.png",
-          BASE + "dea73bbd-4d1b-48bd-aef9-eb2455c51577-45ea62fbd1855a0f672bb8c4f2e0b168.jpg.png",
-        ],
+        cover: MEDIA_BASE + FOTOS.albumDates.capa,
+        photos: FOTOS.albumDates.fotos.map(f => MEDIA_BASE + f),
       },
       {
         title: "Fotos aleatórias",
-        cover: BASE + "a773c634-2ffc-4623-b592-1774dffa8aeb-0d6cae3bdd8b023b8519c19330fc2da7.jpg",
-        photos: [
-          BASE + "e39b457d-3caa-436f-97ea-7a85f96b4e32-414dc38b6499d8c62220055616fc3565.jpg",
-          BASE + "0cf2462b-8afc-41bc-b330-f0f2a7672ae8-8a9c093b1ae6ae070464b95ab4525a91.jpg",
-          BASE + "b4e5e688-3def-4915-89a3-6e96c76beaae-5cba23025775f4e9e8eb60b94748d5cd.jpg",
-          BASE + "7b661e12-56fa-4675-94d3-ba972dcf8f94-abc348ae72f7938748beb391ae46f385.jpg",
-          BASE + "1cd399ad-9d8d-419a-a4a5-abf17bde50f1-6c99267585c22891725ad2ccb7900b12.jpg",
-          BASE + "74774a78-c82a-450b-9c22-34331607c6c6-6498ff5c8aef381328c248240b6b1e2c.jpg",
-          BASE + "3f0a9464-7098-46b9-9659-d2402ac887f6-de362407dd8085b627d0c09ef2b6651a.jpg",
-          BASE + "360309e9-50c9-4489-a120-566ce6e1a08d-bc71ff09570bbadbf0999fd0839efd8d.jpg",
-          BASE + "ebaec386-2a11-4a52-a923-be7674519363-f02b2e512dabbd3a6b880ba5b5beb783.jpg",
-          BASE + "50252533-a361-4e49-9600-c99712e2757c-1da4110b1978edf94fcdc0c4f3f474c0.jpg",
-          BASE + "46b7f6dd-bad1-4e25-8bc9-967e5d2517d6-548a571001a1de767a0d6806710416b5.jpg",
-        ],
+        cover: MEDIA_BASE + FOTOS.albumAleatorias.capa,
+        photos: FOTOS.albumAleatorias.fotos.map(f => MEDIA_BASE + f),
       },
       {
         title: "Primeira viagem",
-        cover: BASE + "70bbf773-59ed-47fb-b232-15c2b05e370f-bf1fcd3cecc3d48bddf3b848afc6bebe.jpg",
-        photos: [
-          BASE + "c49cd677-6a8f-4a1b-901e-2c2254b6520d-452e080ed75841a5923f9a447038528e.jpg",
-          BASE + "a57bbf40-536e-46f1-9f40-c0774ecd323b-bb15343f27edd069a6a0f315617dbfb6.jpg",
-          BASE + "693a27f6-7502-4eaf-a283-e545663061bb-93e99da0083153d56674bb00574e2667.jpg",
-          BASE + "41ad439e-4d51-4ffe-8e33-cc149de21658-b419aaeaeb8e3fab42ffa5cfe89c6b71.jpg",
-          BASE + "8578ee7b-acaa-4d81-9d1d-5216c7859f96-3bb3962c4bcc3f402d7ef7c579f8c42d.jpg",
-          BASE + "bb8afc19-97a2-448f-b095-6947563fe43b-e51e365ef84fb9df842cb338962329e3.jpg",
-          BASE + "3af96242-d22d-4a21-95a1-a31ee31e6da3-274582549cd9196ce440e6e6eec61456.jpg",
-          BASE + "1a49e92d-e5be-475a-9c71-fc1d00387782-748e66892c96d4cf787ce1d500fff007.jpg",
-        ],
+        cover: MEDIA_BASE + FOTOS.albumViagem.capa,
+        photos: FOTOS.albumViagem.fotos.map(f => MEDIA_BASE + f),
       },
     ];
 

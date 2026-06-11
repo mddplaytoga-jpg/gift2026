@@ -2053,14 +2053,6 @@
         },
       },
       {
-        bg: "wp-bg-rose",
-        render: () => `
-        <div class="wp-kicker">vocês fazem parte de apenas</div>
-        <div class="wp-pct">27%</div>
-        <div class="wp-unit" style="-webkit-text-fill-color:#fff">dos casais no mundo 💑</div>
-        <div class="wp-pill">Juntos, vocês são parte de algo extraordinário</div>`,
-      },
-      {
         bg: "wp-bg-amber",
         render: () => `
         <div class="wp-kicker">a trilha sonora de vocês</div>
@@ -2072,45 +2064,18 @@
         bg: "wp-bg-green",
         render: () => `
         <div class="wp-kicker">vocês guardaram</div>
-        <div class="wp-number">28</div>
+        <div class="wp-number">1.079</div>
         <div class="wp-unit">fotos juntos</div>
         <div class="wp-pill">em 3 álbuns especiais 📸</div>`,
-      },
-      {
-        bg: "wp-bg-purple",
-        render: () => `
-        <div class="wp-kicker">vocês já desbloquearam</div>
-        <div class="wp-number">17</div>
-        <div class="wp-unit">conquistas incríveis</div>
-        <div class="wp-pill">de 30 possíveis 🏆</div>`,
       },
       {
         bg: "wp-bg-rose",
         render: () => `
         <div class="wp-kicker">a mensagem de vocês</div>
         <div class="wp-title" style="font-size:20px;line-height:1.5;max-width:320px">
-          "E pensar que tudo começou do nada... ✨"
+          "E pensar que tudo começou com uma simples coincidencia, uma inscrição em curso, uma solicitação via instagram..."
         </div>
         <div class="wp-subtitle" style="margin-top:16px">Tiago para Keisy</div>`,
-      },
-      {
-        bg: "wp-bg-teal",
-        render: () => {
-          const start = new Date("2023-11-11");
-          const target = new Date("2024-11-11"); // 1 ano
-          const now = new Date();
-          const next = new Date("2025-11-11"); // próximo: 2 anos
-          const daysLeft = Math.ceil((next - now) / 86400000);
-          return `
-          <div class="wp-kicker">próximo marco</div>
-          <div class="wp-title">2 Anos Juntos 👑</div>
-          <div class="wp-number" id="wpNextCnt">0</div>
-          <div class="wp-unit">dias restantes</div>`;
-        },
-        onEnter: () => {
-          const daysLeft = Math.ceil((new Date("2025-11-11") - new Date()) / 86400000);
-          animateCounter("wpNextCnt", 0, daysLeft, 1500);
-        },
       },
       {
         bg: "wp-bg-blue",
@@ -2276,10 +2241,15 @@
       renderWpBars();
       if (slide.onEnter) setTimeout(slide.onEnter, 80);
 
+      // Tap zones: disable on timeline so scroll doesn't trigger slide change
+      const wpTapL = document.getElementById("wpTapL");
+      const wpTapR = document.getElementById("wpTapR");
+      if (wpTapL) wpTapL.style.pointerEvents = slide.isTimeline ? "none" : "";
+      if (wpTapR) wpTapR.style.pointerEvents = slide.isTimeline ? "none" : "";
+
       // Timeline slide: no auto-advance (user scrolls + taps "Próxima Seção")
       if (slide.isTimeline) {
         wpStopTimer();
-        // Fill the bar fully so it looks "active"
         const fills = document.querySelectorAll(".wp-bar-fill");
         if (fills[wpIdx]) fills[wpIdx].style.width = "50%";
       } else {
